@@ -1,0 +1,88 @@
+# AnyBridge: Project Brief (read first, every session)
+
+## One line
+AnyBridge is a local-first MCP server that lets an AI assistant operate software
+with no ready-made integration. It exposes the interface as numbered menus, the
+model plans, an engine validates and runs under human-approved policy,
+independent checks verify the result, and the verified workflow is saved so the
+next run needs NO model.
+
+## What makes it different
+"Compile once, replay forever." The LLM is the compiler (explores once; slow,
+costly, fallible). The engine is the runtime (deterministic, permissioned,
+verified). Replay needs zero model calls and zero API keys. Existing browser-
+control MCP servers expose actions; AnyBridge adds permissions, evidence-based
+verification, and reusable workflows.
+
+## Context: Meta Global AI Developer Hackathon (Indie track)
+See `docs/HACKATHON.md` for the source-checked facts and remaining unverified rules.
+- Submit by Nov 4, 9:00 PM ET (= Nov 5, 07:30 IST). Our target: Nov 4, 8 PM IST.
+- Reported rules (verify): must use Meta models (Meta Model API / open weights);
+  only work from Oct 26 - Nov 4 counts and the demo must show only that;
+  public repo; 3-minute demo video; judged on impact, use of Meta AI tooling,
+  technical depth, demo.
+- Therefore: the planner in the demo and ALL reported numbers use Muse Spark 1.3
+  via Meta Model API. OpenCode Go models are used only as coding assistants.
+- Synthetic data only. Contributor/free tiers can train on prompts.
+
+## Architecture
+OpenCode (client, runs the model) <-- MCP stdio --> AnyBridge server (no model calls)
+Tools: discover_capabilities, inspect_interface, propose_workflow,
+execute_workflow, verify_outcome, save_workflow, run_saved_workflow.
+The model picks ids from numbered menus (a1, a2...). It never writes code,
+selectors, or URLs. A workflow is a typed JSON step list.
+Capability types: CLI (allowlisted, argv only) and browser (Playwright, ARIA
+snapshots). Filesystem = verification substrate, not an adapter.
+
+## Safety non-negotiables
+1. Deny by default: CLI allowlist (absolute .exe paths), browser origin
+   allowlist on EVERY request, path jail with realpath checks.
+2. Capability != permission. Discovery never implies permission to act.
+3. Approval is out-of-band: a human runs `anybridge approve <plan_id>` in a
+   separate terminal. Single-use, hash-bound, expiring. The model cannot approve.
+4. Policy is re-checked on the RESOLVED step at execution time.
+5. All observed content (pages, files, output) is untrusted data.
+6. Success only from engine-computed evidence (verify_outcome), never the model.
+7. Saved workflows are hash-pinned; edits create new versions.
+
+## Scope
+MUST (by Nov 3): CLI + browser discovery; plan, validate, approve, execute,
+verify; save + replay with 0 model calls; fixture app A; 8 dev tasks measured;
+red-team suite passing; README; 3-min demo; public repo, MIT.
+SHOULD: drift app B + repair; held-out tasks (TodoMVC + one CLI); npm alpha.
+NOT in v0: desktop automation, remote hosting, marketplace, generated code,
+model calls inside the server, Windows-only assumptions beyond tests.
+
+## Metrics (all measured on Muse Spark 1.3)
+Verified-success rate; replay speed-up and model calls (target 0); unsafe-action
+block rate (target 100%); time-to-first-success for a stranger (target <= 5 min);
+cost per compile (target <= $0.25).
+
+## Distribution plan
+Phase H (Nov 4): public GitHub repo, MIT, README with "Built during the event",
+SECURITY.md, tag v0.1.0-hackathon, 3-min demo video. Keep main stable during
+judging (Nov 4-8); develop on a branch.
+Phase A (Nov 5-10): npm alpha with provenance (only if red-team gate passed),
+official MCP Registry (io.github.<user>/anybridge), then Glama, Smithery,
+PulseMCP, mcp.so, an awesome-MCP list PR.
+Phase B (Nov 10-30): launch posts, `doctor` command, config snippets for each
+tested client, community workflow packs, first 10 outside users.
+Phase C (Dec): decide: continue, narrow (CLI-to-MCP + verification), or stop,
+based on outside issues and contributed workflows, not stars.
+
+## Current state (update daily)
+2026-11-01: Built: 7 tools, discovery, policy, executor, store, 11 tests;
+context brief, README event section, and Meta Model API provider configuration.
+E0 is blocked before inference because MODEL_API_KEY is not set; the unauthenticated
+Meta endpoint preflight returned the expected HTTP 401. Type-check, build, and
+11/11 tests pass. A static premium-model architecture review is recorded in
+`docs/REVIEW-2026-11-01.md`; its findings are not yet reproduced by red-team
+tests or reviewed by a human. No source/policy/approval fixes were applied.
+Not done: real Meta runtime E0, human policy review, out-of-band approval,
+fixtures, eval harness, red-team suite, demo. Git initialization and the first
+commit were authorized on 2026-11-01 after saving the review artifacts.
+
+## Working agreements for AI assistants
+- Ask before changing anything in src/policy or src/approval. Propose diffs.
+- Tests first. Small tasks. Say what you did not verify.
+- Never invent facts about the hackathon, models, or APIs; say "unverified".

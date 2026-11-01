@@ -1,0 +1,29 @@
+export interface AnyBridgeError {
+  code: string;
+  message: string;
+  hint: string;
+}
+
+export function makeError(code: string, message: string, hint: string): AnyBridgeError {
+  return { code, message, hint };
+}
+
+export const ErrorCodes = {
+  UNKNOWN_ACTION_ID: "UNKNOWN_ACTION_ID",
+  MISSING_ARG: "MISSING_ARG",
+  TYPE_MISMATCH: "TYPE_MISMATCH",
+  NO_CHECKS: "NO_CHECKS",
+  EFFECT_NEEDS_APPROVAL: "EFFECT_NEEDS_APPROVAL",
+  PLAN_TOO_LONG: "PLAN_TOO_LONG",
+  ORIGIN_NOT_ALLOWED: "ORIGIN_NOT_ALLOWED",
+  PATH_OUTSIDE_JAIL: "PATH_OUTSIDE_JAIL",
+  UNAPPROVED: "UNAPPROVED",
+  NOT_IMPLEMENTED: "NOT_IMPLEMENTED",
+  INVALID_INPUT: "INVALID_INPUT",
+  TARGET_NOT_FOUND: "TARGET_NOT_FOUND",
+  STEP_FAILED: "STEP_FAILED",
+  VERIFICATION_FAILED: "VERIFICATION_FAILED",
+  WORKFLOW_NOT_FOUND: "WORKFLOW_NOT_FOUND",
+  HASH_MISMATCH: "HASH_MISMATCH",
+  RATE_LIMITED: "RATE_LIMITED",
+} as const;
