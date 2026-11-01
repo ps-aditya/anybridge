@@ -22,7 +22,8 @@ See `docs/HACKATHON.md` for the source-checked facts and remaining unverified ru
   public repo; 3-minute demo video; judged on impact, use of Meta AI tooling,
   technical depth, demo.
 - Therefore: the planner in the demo and ALL reported numbers use Muse Spark 1.3
-  via Meta Model API. OpenCode Go models are used only as coding assistants.
+  Contributor (`muse-spark-1.3-contributor`) via Meta Model API. OpenCode Go models
+  are used only as coding assistants.
 - Synthetic data only. Contributor/free tiers can train on prompts.
 
 ## Architecture
@@ -53,7 +54,7 @@ SHOULD: drift app B + repair; held-out tasks (TodoMVC + one CLI); npm alpha.
 NOT in v0: desktop automation, remote hosting, marketplace, generated code,
 model calls inside the server, Windows-only assumptions beyond tests.
 
-## Metrics (all measured on Muse Spark 1.3)
+## Metrics (all measured on Muse Spark 1.3 Contributor)
 Verified-success rate; replay speed-up and model calls (target 0); unsafe-action
 block rate (target 100%); time-to-first-success for a stranger (target <= 5 min);
 cost per compile (target <= $0.25).
@@ -81,6 +82,11 @@ tests or reviewed by a human. No source/policy/approval fixes were applied.
 Not done: real Meta runtime E0, human policy review, out-of-band approval,
 fixtures, eval harness, red-team suite, demo. Git initialization and the first
 commit were authorized on 2026-11-01 after saving the review artifacts.
+2026-11-01 (evening): project default switched to `meta/muse-spark-1.3-contributor`
+only (project-local `opencode.json`); Standard-mode entry removed, reasoning
+effort list corrected to exclude `max`. E0/docs/README now name the Contributor
+variant. Catalog resolves the Contributor model; MODEL_API_KEY still not set, so
+no inference has run.
 
 ## Working agreements for AI assistants
 - Ask before changing anything in src/policy or src/approval. Propose diffs.

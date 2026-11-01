@@ -7,8 +7,9 @@ execute, verify, save, replay. MCP server over stdio.
 
 AnyBridge is being built during the Meta Global AI Developer Hackathon.
 For the event, the demo planner and all reported evaluation results will use
-Muse Spark 1.3 through Meta Model API; other coding models are used only as
-development assistants.
+Muse Spark 1.3 Contributor (`muse-spark-1.3-contributor`) through Meta Model API;
+other coding models are used only as development assistants. Contributor mode may
+use prompts for training, so use synthetic data only.
 
 ## Setup
 
