@@ -21,13 +21,16 @@ See `docs/HACKATHON.md` for the source-checked facts and remaining unverified ru
   only work from Oct 26 - Nov 4 counts and the demo must show only that;
   public repo; 3-minute demo video; judged on impact, use of Meta AI tooling,
   technical depth, demo.
-- Therefore: the planner in the demo and ALL reported numbers use Muse Spark 1.3
-  Contributor (`muse-spark-1.3-contributor`) via Meta Model API. OpenCode Go models
-  are used only as coding assistants.
+- Therefore: development and ALL reported numbers use Muse Spark 1.3
+  Contributor (`muse-spark-1.3-contributor`) via Meta Model API. The planner is
+  not locked to Meta: the server makes no model calls, so any MCP-capable
+  assistant can plan through it.
 - Synthetic data only. Contributor/free tiers can train on prompts.
 
 ## Architecture
 OpenCode (client, runs the model) <-- MCP stdio --> AnyBridge server (no model calls)
+The planner is whatever model drives the MCP client; the server never calls a
+model itself, so the product is open to every assistant, not tied to any provider.
 Tools: discover_capabilities, inspect_interface, propose_workflow,
 execute_workflow, verify_outcome, save_workflow, run_saved_workflow.
 The model picks ids from numbered menus (a1, a2...). It never writes code,
