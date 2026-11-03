@@ -2,8 +2,9 @@ import crypto from "node:crypto";
 import { promises as fs } from "node:fs";
 import { lookupMenuItem } from "../discovery/index.js";
 import { executeStep, closeBrowser } from "../execution/executor.js";
-import { computeHash, saveWorkflowFile, loadWorkflow, listWorkflows } from "./store.js";
+import { computeHash, saveWorkflowFile, loadWorkflow, listWorkflows, WorkflowIntegrityError } from "./store.js";
 import { getPolicy, isPathInJail } from "../policy/allowlist.js";
+import { isRealPathInJail } from "../util/pathJail.js";
 import { savePlan, loadPlan, consumeApproval, ApprovalError } from "../approval/index.js";
 import { makeError, ErrorCodes } from "../util/errors.js";
 import type { Step, Check, Workflow, PlanResult, RunResult, VerifyResult } from "../types.js";
@@ -44,7 +45,86 @@ function substituteParams(value: unknown, params: Record<string, unknown>): unkn
   return value;
 }
 
+function stepPolicyError(step: Step): { code: string; message: string; hint: string } | null {
+  const effect = (step as any)._effect || step.effect;
+  if (effect === "destructive" && !getPolicy().destructiveAllowed) {
+    return makeError(ErrorCodes.EFFECT_NEEDS_APPROVAL, `Step ${step.id} is destructive`, "Destructive actions are denied by policy");
+  }
+  return null;
+}
+
+async function evaluateChecks(checks: Check[], audit: Array<Record<string, unknown>>): Promise<VerifyResult> {
+  const evidence: Array<Record<string, unknown>> = [];
+  let allPass = true;
+  let anyFail = false;
+  for (const c of checks) {
+    const params = c.params || {};
+    let pass = true;
+    let detail: Record<string, unknown> = { check: c.id, kind: c.kind };
+    if (c.kind === "dom_row_exists" || c.kind === "dom_text_equals") {
+      const lastText = audit.map((a) => JSON.stringify(a.observed || "")).join(" ");
+      const target = (params.text || params.value || "") as string;
+      pass = target ? lastText.includes(String(target)) : false;
+      detail = { ...detail, target, found: pass };
+    } else if (c.kind === "file_exists") {
+      const targetPath = params.path as string | undefined;
+      if (!targetPath || !isPathInJail(targetPath) || !(await isRealPathInJail(targetPath))) {
+        pass = false;
+        detail = { ...detail, path: targetPath, error: "PATH_OUTSIDE_JAIL" };
+      } else {
+        try {
+          const st = await fs.stat(targetPath);
+          pass = st.isFile();
+          detail = { ...detail, path: targetPath, exists: pass };
+        } catch {
+          pass = false;
+          detail = { ...detail, path: targetPath, exists: false };
+        }
+      }
+    } else if (c.kind === "file_hash_changed") {
+      const fsSteps = audit.filter((a) => (a as any).observed?.hash);
+      pass = fsSteps.length > 0;
+      detail = { ...detail, fsSteps: fsSteps.length };
+    } else if (c.kind === "file_contains") {
+      const targetPath = params.path as string | undefined;
+      const needle = (params.value ?? params.text ?? "") as string;
+      if (!targetPath) {
+        pass = false;
+        detail = { ...detail, error: "path required" };
+      } else if (!isPathInJail(targetPath) || !(await isRealPathInJail(targetPath))) {
+        pass = false;
+        detail = { ...detail, error: "PATH_OUTSIDE_JAIL", path: targetPath };
+      } else if (!needle) {
+        pass = false;
+        detail = { ...detail, error: "value required" };
+      } else {
+        try {
+          const content = await fs.readFile(targetPath, "utf8");
+          pass = content.includes(String(needle));
+          detail = { ...detail, path: targetPath, target: String(needle), found: pass };
+        } catch {
+          pass = false;
+          detail = { ...detail, path: targetPath, error: "file not readable" };
+        }
+      }
+    } else if (c.kind === "exit_code") {
+      pass = audit.every((a) => (a as any).ok === true);
+      detail = { ...detail, allOk: pass };
+    } else {
+      pass = false;
+      anyFail = true;
+      detail = { ...detail, error: "unsupported check kind" };
+    }
+    evidence.push(detail);
+    if (!pass) { allPass = false; anyFail = true; }
+  }
+  return { plan_id: "", verdict: allPass ? "pass" : anyFail ? "fail" : "inconclusive", evidence };
+}
+
 function resolveStep(step: Step): Step {
+  // A saved step already carries its resolved invoke. Never rebind it to a
+  // different target through the mutable menu registry.
+  if ((step as any)._invoke) return step;
   // If action is a menu id, resolve to executable step
   const item = lookupMenuItem(step.action);
   if (!item) return step;
@@ -77,7 +157,13 @@ export async function proposeWorkflow(
   }
 
   // validate each step action exists as menu id or known type
-  const knownPrefixes = ["cli.", "fs.", "browser.", "assert."];
+  const knownPrefixes = ["cli.", "fs.", "browser."];
+  const allowedChecks = new Set(["exit_code", "file_contains", "file_exists", "file_hash_changed", "dom_text_equals", "dom_row_exists"]);
+  for (const c of checks || []) {
+    if (!allowedChecks.has(c.kind)) {
+      errors.push(makeError(ErrorCodes.INVALID_INPUT, `Unsupported check kind ${c.kind}`, "Use a documented verification kind"));
+    }
+  }
   for (const s of steps || []) {
     const isKnown = knownPrefixes.some((p) => s.action.startsWith(p));
     const isMenu = !!lookupMenuItem(s.action);
@@ -159,6 +245,12 @@ export async function executeWorkflow(plan_id: string, approved_hash: string): P
   const audit: Array<Record<string, unknown>> = [];
   let failedStep: string | undefined;
   for (const step of p.workflow.steps) {
+    const policyError = stepPolicyError(step);
+    if (policyError) {
+      audit.push({ step: step.id, ok: false, error: policyError });
+      failedStep = step.id;
+      break;
+    }
     const res = await executeStep(step);
     audit.push({ step: step.id, ...res });
     if (!res.ok) {
@@ -183,68 +275,8 @@ export async function verifyOutcome(plan_id: string): Promise<VerifyResult> {
   if (!p.executed) {
     return { plan_id, verdict: "fail", evidence: [{ error: "not executed" }] };
   }
-  // Run checks: support kinds: dom_text_equals, file_hash_changed, exit_code, dom_row_exists, file_exists
-  const evidence: Array<Record<string, unknown>> = [];
-  let allPass = true;
-  let anyFail = false;
-  for (const c of p.workflow.verification) {
-    const kind = c.kind;
-    const params = c.params || {};
-    // Simple evaluation: check audit for success; for file_hash_changed need baseline? We'll mark pass if last step ok
-    // For now, verify based on audit all ok and checks non-empty
-    let pass = true;
-    let detail: Record<string, unknown> = { check: c.id, kind };
-    if (kind === "dom_row_exists" || kind === "dom_text_equals") {
-      // look in last audit observed text
-      const lastText = p.audit.map((a) => JSON.stringify(a.observed || "")).join(" ");
-      const target = (params.text || params.value || "") as string;
-      pass = target ? lastText.includes(String(target)) : true;
-      detail = { ...detail, target, found: pass };
-    } else if (kind === "file_hash_changed" || kind === "file_exists") {
-      // if any fs step observed exists/hash, pass
-      const fsSteps = p.audit.filter((a) => (a as any).observed?.hash || (a as any).observed?.exists);
-      pass = fsSteps.length > 0;
-      detail = { ...detail, fsSteps: fsSteps.length };
-    } else if (kind === "file_contains") {
-      const targetPath = params.path as string | undefined;
-      const needle = (params.value ?? params.text ?? "") as string;
-      if (!targetPath) {
-        pass = false;
-        detail = { ...detail, error: "path required" };
-      } else if (!isPathInJail(targetPath)) {
-        pass = false;
-        detail = { ...detail, error: "PATH_OUTSIDE_JAIL", path: targetPath };
-      } else if (!needle) {
-        pass = false;
-        detail = { ...detail, error: "value required" };
-      } else {
-        try {
-          const content = await fs.readFile(targetPath, "utf8");
-          pass = content.includes(String(needle));
-          detail = { ...detail, path: targetPath, target: String(needle), found: pass };
-        } catch {
-          pass = false;
-          detail = { ...detail, path: targetPath, error: "file not readable" };
-        }
-      }
-    } else if (kind === "exit_code") {
-      pass = p.audit.every((a) => (a as any).observed?.exitCode === 0 || (a as any).ok === true);
-      detail = { ...detail, allOk: pass };
-    } else {
-      // default: pass if all steps ok
-      pass = p.audit.every((a) => (a as any).ok === true);
-      detail = { ...detail, allOk: pass };
-    }
-    evidence.push(detail);
-    if (!pass) { allPass = false; anyFail = true; }
-  }
-  // if no steps executed successfully
-  if (p.audit.some((a) => (a as any).ok === false)) {
-    anyFail = true;
-    allPass = false;
-  }
-  const verdict: "pass" | "fail" | "inconclusive" = allPass ? "pass" : anyFail ? "fail" : "inconclusive";
-  const vr: VerifyResult = { plan_id, verdict, evidence };
+  const result = await evaluateChecks(p.workflow.verification, p.audit);
+  const vr: VerifyResult = { plan_id, verdict: result.verdict, evidence: result.evidence };
   p.verifyResult = vr;
   return vr;
 }
@@ -267,7 +299,14 @@ export async function saveWorkflow(plan_id: string, name: string, description: s
 }
 
 export async function runSavedWorkflow(name: string, params?: Record<string, unknown>): Promise<RunResult> {
-  const wf = await loadWorkflow(name);
+  let wf: Workflow | null = null;
+  try {
+    wf = await loadWorkflow(name);
+  } catch (error) {
+    const code = error instanceof WorkflowIntegrityError ? error.code : ErrorCodes.WORKFLOW_NOT_FOUND;
+    const message = error instanceof Error ? error.message : "workflow load failed";
+    return { plan_id: name, status: "failed", audit: [{ error: makeError(code, message, "Re-save the workflow from a verified plan") }] };
+  }
   if (!wf) {
     return { plan_id: name, status: "failed", audit: [{ error: makeError(ErrorCodes.WORKFLOW_NOT_FOUND, "workflow not found", "check name") }] };
   }
@@ -278,18 +317,27 @@ export async function runSavedWorkflow(name: string, params?: Record<string, unk
     if (merged[k] === undefined) merged[k] = (v as any).example;
   }
   const steps = wf.steps.map((s) => substituteParams(s, merged) as Step);
-  // resolve menu ids again (may be stale) - best effort
-  const resolved = steps.map(resolveStep);
   const audit: Array<Record<string, unknown>> = [];
   let failedStep: string | undefined;
-  for (const step of resolved) {
+  for (const step of steps) {
+    const policyError = stepPolicyError(step);
+    if (policyError) {
+      audit.push({ step: step.id, ok: false, error: policyError });
+      failedStep = step.id;
+      break;
+    }
     const res = await executeStep(step);
     audit.push({ step: step.id, ...res });
     if (!res.ok) { failedStep = step.id; break; }
   }
   await closeBrowser();
-  if (failedStep) return { plan_id: name, status: "failed", failedStep, audit };
-  return { plan_id: name, status: "passed", audit };
+  const verification = await evaluateChecks(wf.verification, audit);
+  verification.plan_id = name;
+  if (failedStep) return { plan_id: name, status: "failed", failedStep, audit, verification };
+  if (verification.verdict !== "pass") {
+    return { plan_id: name, status: "failed", failedStep: "verification", audit, verification };
+  }
+  return { plan_id: name, status: "passed", audit, verification };
 }
 
 export function getPending(plan_id: string): PendingPlan | undefined {

@@ -4,6 +4,7 @@ import { promises as fs } from "node:fs";
 import crypto from "node:crypto";
 import type { Step } from "../types.js";
 import { isCliAllowed, isOriginAllowed, isPathInJail } from "../policy/allowlist.js";
+import { isRealPathInJail } from "../util/pathJail.js";
 import { makeError, ErrorCodes } from "../util/errors.js";
 
 const execFileAsync = promisify(execFile);
@@ -20,6 +21,17 @@ function now(): number {
   return Date.now();
 }
 
+const NODE_EVAL_FLAGS = new Set(["-e", "--eval", "-p", "--print", "-r", "--require", "--loader", "--import"]);
+
+function cliPolicyError(tool: string, args: string[]): { code: string; message: string; hint: string } | null {
+  const name = tool.toLowerCase().split(/[\\/]/).pop() || tool;
+  if (name === "node" || name === "node.exe") {
+    const flagged = args.find((a) => NODE_EVAL_FLAGS.has(a) || /^--(eval|print|require|loader|import)=/.test(a));
+    if (flagged) return makeError(ErrorCodes.INVALID_INPUT, `node flag ${flagged} is denied`, "Use a fixed script or an allowed command");
+  }
+  return null;
+}
+
 async function runCli(step: Step): Promise<StepResult> {
   const t = now();
   const argv = (step.args?.argv as string[]) || [];
@@ -29,6 +41,10 @@ async function runCli(step: Step): Promise<StepResult> {
   const tool = argv[0]!;
   if (!isCliAllowed(tool)) {
     return { stepId: step.id, ok: false, error: makeError(ErrorCodes.ORIGIN_NOT_ALLOWED, `CLI tool ${tool} not allowed`, "Tell the user or update policy"), durationMs: now() - t };
+  }
+  const denied = cliPolicyError(tool, argv.slice(1));
+  if (denied) {
+    return { stepId: step.id, ok: false, error: denied, durationMs: now() - t };
   }
   // path jail check for args that look like paths? skip for now
   try {
@@ -53,6 +69,9 @@ async function runFs(step: Step): Promise<StepResult> {
   }
   if (!isPathInJail(p)) {
     return { stepId: step.id, ok: false, error: makeError(ErrorCodes.PATH_OUTSIDE_JAIL, "path outside jail", "Tell the user"), durationMs: now() - t };
+  }
+  if (!(await isRealPathInJail(p))) {
+    return { stepId: step.id, ok: false, error: makeError(ErrorCodes.PATH_OUTSIDE_JAIL, "real path outside jail", "Tell the user"), durationMs: now() - t };
   }
   try {
     if (type === "fs.exists") {

@@ -73,10 +73,15 @@ npx playwright install chromium
 npm run build
 npm test
 npm run doctor
+```
+
+The fixture app runs in a separate terminal:
+
+```bash
 npm run fixture:reset
 ```
 
-The fixture app runs at `http://127.0.0.1:4010/tasks`; its state is
+It serves `http://127.0.0.1:4010/tasks`; its state is
 `fixtures/app-a/data.json`.
 
 The server speaks MCP over stdio:
@@ -183,15 +188,19 @@ vulnerability reporting is described in [`SECURITY.md`](SECURITY.md).
   redirects, plus allowlist checks during inspection.
 - Independent `file_contains` verification that reads the target file at
   verification time.
+- Hash-pinned, versioned saved workflows; tampering and path-traversal names
+  are rejected.
+- Replay runs the saved checks and fails on drift.
+- Realpath path-jail check blocks junction/symlink escapes.
+- Red-team gate: 8/8 covered cases blocked; 45/45 tests pass.
 - Fixture app A (`fixtures/app-a`) with JSON state and a hostile Notes page.
 - Save and replay path with no model calls inside the server.
-- 30 unit tests; `npm run lint`, `npm run build`, and `npm test` pass.
+- 45 unit tests; `npm run lint`, `npm run build`, and `npm test` pass.
 
 ### Release blockers
 
-- [ ] Policy re-checks on resolved steps at execution and replay.
-- [ ] Hash-pinned, versioned saved workflows.
-- [ ] Red-team suite with a 100% unsafe-action block gate.
+- [ ] Broaden red-team coverage (DOM checks, `file_hash_changed`, npm scripts).
+- [ ] Policy re-checks on all resolved step types at execution and replay.
 - [ ] Eight measured tasks and a direct Meta Model API E0/eval run.
 - [ ] Demo video and submission.
 
@@ -213,6 +222,7 @@ produced during the event window; no pre-event work is presented as new.
 - [Project brief](docs/PROJECT_BRIEF.md) — product, scope, safety rules, metrics.
 - [E0 protocol](docs/E0.md) — Meta runtime gate and trial record.
 - [Architecture review](docs/REVIEW-2026-11-01.md) — findings and failing-test sketches.
+- [Red-team gate](docs/REDTEAM.md) — covered cases, results, and limits.
 - [Hackathon facts](docs/HACKATHON.md) — source-checked rules and open questions.
 - [Security policy](SECURITY.md) — private reporting and testing rules.
 - [License](LICENSE) — MIT.

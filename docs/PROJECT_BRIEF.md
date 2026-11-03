@@ -76,6 +76,11 @@ Phase C (Dec): decide: continue, narrow (CLI-to-MCP + verification), or stop,
 based on outside issues and contributed workflows, not stars.
 
 ## Current state (update daily)
+2026-11-03 (hardening): Added hash-pinned/versioned workflow store, replay
+checks, replay policy re-check, realpath path jail, Node eval-flag denial, and
+red-team gate `docs/REDTEAM.md` (8/8 blocked; 45/45 tests). Demo replay passes
+after fixture reset with replay verification. Remaining: broaden red-team,
+resolve all step-type policy checks, measured tasks, final video.
 2026-11-03 (demo build): Added fixture app A (`fixtures/app-a`, JSON state,
 hostile Notes page), out-of-band approval CLI (single-use, hash-bound, 10m),
 independent `file_contains` verification, browser origin enforcement on every

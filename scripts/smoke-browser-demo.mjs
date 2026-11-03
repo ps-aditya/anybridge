@@ -3,7 +3,7 @@ import { mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { inspectInterface } from "../dist/discovery/index.js";
-import { proposeWorkflow, executeWorkflow, verifyOutcome } from "../dist/workflow/index.js";
+import { proposeWorkflow, executeWorkflow, verifyOutcome, saveWorkflow, runSavedWorkflow } from "../dist/workflow/index.js";
 import { closeBrowser } from "../dist/execution/executor.js";
 
 process.env.ANYBRIDGE_STATE_DIR = await mkdtemp(join(tmpdir(), "ab-demo-"));
@@ -36,6 +36,10 @@ console.log(out.split("\n").filter((l) => l.includes("Approved")).join("\n"));
 
 const run = await executeWorkflow(plan.plan_id, plan.hash);
 const verify = await verifyOutcome(plan.plan_id);
-console.log(JSON.stringify({ menu: { page: page.id, input: input.id, add: add.id }, plan: plan.plan_id, run: run.status, audit: run.audit, verify: verify.verdict, evidence: verify.evidence }));
+const saved = await saveWorkflow(plan.plan_id, "add-ship-demo", "Add Ship demo to the task list");
+if (!saved.ok) throw new Error(`save failed: ${JSON.stringify(saved)}`);
+await fetch("http://127.0.0.1:4010/reset", { method: "POST" });
+const replay = await runSavedWorkflow("add-ship-demo");
+console.log(JSON.stringify({ menu: { page: page.id, input: input.id, add: add.id }, plan: plan.plan_id, run: run.status, verify: verify.verdict, evidence: verify.evidence, replay: replay.status, replayVerification: replay.verification?.verdict }));
 await closeBrowser();
-if (run.status !== "passed" || verify.verdict !== "pass") process.exitCode = 1;
+if (run.status !== "passed" || verify.verdict !== "pass" || replay.status !== "passed" || replay.verification?.verdict !== "pass") process.exitCode = 1;

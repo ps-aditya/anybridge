@@ -84,6 +84,7 @@ export interface RunResult {
   status: "passed" | "failed" | "stopped";
   failedStep?: string;
   audit: Array<Record<string, unknown>>;
+  verification?: VerifyResult;
 }
 
 export interface VerifyResult {
