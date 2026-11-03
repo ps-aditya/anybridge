@@ -76,6 +76,14 @@ Phase C (Dec): decide: continue, narrow (CLI-to-MCP + verification), or stop,
 based on outside issues and contributed workflows, not stars.
 
 ## Current state (update daily)
+2026-11-03 (demo build): Added fixture app A (`fixtures/app-a`, JSON state,
+hostile Notes page), out-of-band approval CLI (single-use, hash-bound, 10m),
+independent `file_contains` verification, browser origin enforcement on every
+request plus inspection allowlist, and a page-navigation menu item. Real demo
+path passes: inspect → propose a1/a8/a9 → CLI approve → execute → verify from
+`fixtures/app-a/data.json`; hostile link click returns `ORIGIN_NOT_ALLOWED`.
+Suite 30/30. Remaining: resolved-step policy re-check, hash-pinned saved
+workflows, red-team suite, measured tasks, final video.
 2026-11-03 (evening): E0 measured 10/10 pass, engine-confirmed, using
 `opencode-go/muse-spark-1.3-contributor` (fallback gateway; no MODEL_API_KEY).
 G0 satisfied on the fallback route; latency/tokens/cost not captured. Direct

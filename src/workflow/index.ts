@@ -1,8 +1,10 @@
 import crypto from "node:crypto";
+import { promises as fs } from "node:fs";
 import { lookupMenuItem } from "../discovery/index.js";
 import { executeStep, closeBrowser } from "../execution/executor.js";
 import { computeHash, saveWorkflowFile, loadWorkflow, listWorkflows } from "./store.js";
-import { getPolicy } from "../policy/allowlist.js";
+import { getPolicy, isPathInJail } from "../policy/allowlist.js";
+import { savePlan, loadPlan, consumeApproval, ApprovalError } from "../approval/index.js";
 import { makeError, ErrorCodes } from "../util/errors.js";
 import type { Step, Check, Workflow, PlanResult, RunResult, VerifyResult } from "../types.js";
 
@@ -115,17 +117,44 @@ export async function proposeWorkflow(
   const risk_summary = `steps=${resolvedSteps.length}, write=${writeCount}, destructive=${destructiveCount}`;
 
   pending.set(plan_id, { plan_id, hash, workflow: wf, audit: [], executed: false });
+  await savePlan(plan_id, hash, wf);
   return { plan_id, hash, risk_summary };
 }
 
 export async function executeWorkflow(plan_id: string, approved_hash: string): Promise<RunResult> {
-  const p = pending.get(plan_id);
+  let p = pending.get(plan_id);
+  if (!p) {
+    try {
+      const stored = await loadPlan(plan_id);
+      if (stored) {
+        p = { plan_id, hash: stored.hash, workflow: stored.workflow, audit: [], executed: false };
+        pending.set(plan_id, p);
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "invalid plan";
+      return { plan_id, status: "failed", audit: [{ error: makeError(ErrorCodes.INVALID_INPUT, message, "Use the plan_id returned by propose_workflow") }] };
+    }
+  }
   if (!p) {
     return { plan_id, status: "failed", audit: [{ error: "plan not found" }] };
   }
   if (p.hash !== approved_hash) {
     return { plan_id, status: "failed", audit: [{ error: makeError(ErrorCodes.UNAPPROVED, "execute_workflow needs the approved hash from the user's yes.", "Get user yes") }] };
   }
+  try {
+    // The human-created approval file is the authority; the model-supplied
+    // hash is only a cross-check. Claiming the file is single-use.
+    await consumeApproval(plan_id, p.hash);
+  } catch (error) {
+    const code = error instanceof ApprovalError ? error.code : ErrorCodes.UNAPPROVED;
+    const message = error instanceof Error ? error.message : "approval check failed";
+    return {
+      plan_id,
+      status: "failed",
+      audit: [{ error: makeError(code, message, `A human must run: anybridge approve ${plan_id}`) }],
+    };
+  }
+  p.verifyResult = undefined;
   // execute steps
   const audit: Array<Record<string, unknown>> = [];
   let failedStep: string | undefined;
@@ -176,6 +205,28 @@ export async function verifyOutcome(plan_id: string): Promise<VerifyResult> {
       const fsSteps = p.audit.filter((a) => (a as any).observed?.hash || (a as any).observed?.exists);
       pass = fsSteps.length > 0;
       detail = { ...detail, fsSteps: fsSteps.length };
+    } else if (kind === "file_contains") {
+      const targetPath = params.path as string | undefined;
+      const needle = (params.value ?? params.text ?? "") as string;
+      if (!targetPath) {
+        pass = false;
+        detail = { ...detail, error: "path required" };
+      } else if (!isPathInJail(targetPath)) {
+        pass = false;
+        detail = { ...detail, error: "PATH_OUTSIDE_JAIL", path: targetPath };
+      } else if (!needle) {
+        pass = false;
+        detail = { ...detail, error: "value required" };
+      } else {
+        try {
+          const content = await fs.readFile(targetPath, "utf8");
+          pass = content.includes(String(needle));
+          detail = { ...detail, path: targetPath, target: String(needle), found: pass };
+        } catch {
+          pass = false;
+          detail = { ...detail, path: targetPath, error: "file not readable" };
+        }
+      }
     } else if (kind === "exit_code") {
       pass = p.audit.every((a) => (a as any).observed?.exitCode === 0 || (a as any).ok === true);
       detail = { ...detail, allOk: pass };

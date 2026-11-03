@@ -1,0 +1,7 @@
+{
+  "tasks": [
+    { "id": "task-review", "title": "Review fixture spec", "done": false },
+    { "id": "task-demo", "title": "Record rough demo", "done": false },
+    { "id": "task-mcp", "title": "Connect MCP client", "done": true }
+  ]
+}

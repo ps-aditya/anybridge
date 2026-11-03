@@ -79,53 +79,82 @@ async function runFs(step: Step): Promise<StepResult> {
 }
 
 // Browser executor using playwright, lazily launched
-let browserCtx: { browser: any; page: any } | null = null;
+let browserCtx: { browser: any; context: any; page: any; blocked: Array<{ url: string; reason: string }> } | null = null;
 
 async function ensureBrowser() {
   if (browserCtx) return browserCtx;
   const pw = await import("playwright");
   const browser = await pw.chromium.launch({ headless: true });
-  const page = await browser.newPage();
-  browserCtx = { browser, page };
+  const context = await browser.newContext();
+  const blocked: Array<{ url: string; reason: string }> = [];
+  await context.route("**/*", (route: any) => {
+    const url = route.request().url();
+    if (url.startsWith("about:") || url.startsWith("data:")) return route.continue();
+    let origin = "";
+    try { origin = new URL(url).origin; } catch { origin = ""; }
+    if (!origin || !isOriginAllowed(origin)) {
+      blocked.push({ url, reason: "ORIGIN_NOT_ALLOWED" });
+      return route.abort("blockedbyclient");
+    }
+    return route.continue();
+  });
+  const page = await context.newPage();
+  browserCtx = { browser, context, page, blocked };
   return browserCtx;
 }
 
 async function runBrowser(step: Step): Promise<StepResult> {
   const t = now();
   const type = step.action; // browser.goto etc
+  let blocked: Array<{ url: string; reason: string }> = [];
+  let before = 0;
   try {
-    const { page } = await ensureBrowser();
+    const ctx = await ensureBrowser();
+    const { page } = ctx;
+    blocked = ctx.blocked;
+    before = blocked.length;
     if (type === "browser.goto") {
       const url = step.args?.url as string;
       if (!url) return { stepId: step.id, ok: false, error: makeError(ErrorCodes.MISSING_ARG, "url missing", "Add url"), durationMs: now() - t };
-      // origin check
       let origin = "";
-      try { origin = new URL(url).origin; } catch {}
-      if (origin && !isOriginAllowed(origin)) {
+      try { origin = new URL(url).origin; } catch {
+        return { stepId: step.id, ok: false, error: makeError(ErrorCodes.INVALID_INPUT, `invalid url ${url}`, "Use an allowed origin"), durationMs: now() - t };
+      }
+      if (!isOriginAllowed(origin)) {
         return { stepId: step.id, ok: false, error: makeError(ErrorCodes.ORIGIN_NOT_ALLOWED, `origin ${origin} not allowed`, "Tell the user"), durationMs: now() - t };
       }
       await page.goto(url, { timeout: 30000 });
+      if (blocked.length > before) {
+        return { stepId: step.id, ok: false, error: makeError(ErrorCodes.ORIGIN_NOT_ALLOWED, `request blocked: ${blocked[before]?.url || "unknown"}`, "A page requested a disallowed origin"), durationMs: now() - t };
+      }
       return { stepId: step.id, ok: true, observed: { url: page.url(), title: await page.title() }, durationMs: now() - t };
     }
     if (type === "browser.click") {
-      const loc = step.args?.locator as { role?: string; name?: string } | undefined;
+      const loc = step.args?.locator as { role?: string; name?: string; accessibleName?: string } | undefined;
       if (!loc) return { stepId: step.id, ok: false, error: makeError(ErrorCodes.MISSING_ARG, "locator missing", "Add locator"), durationMs: now() - t };
-      const locator = loc.role ? page.getByRole(loc.role as any, { name: loc.name }) : page.getByText(loc.name || "");
+      const name = loc.name ?? loc.accessibleName ?? "";
+      const locator = loc.role ? page.getByRole(loc.role as any, { name }) : page.getByText(name);
       await locator.first().click({ timeout: 15000 });
+      await page.waitForTimeout(300);
+      if (blocked.length > before) {
+        return { stepId: step.id, ok: false, error: makeError(ErrorCodes.ORIGIN_NOT_ALLOWED, `request blocked: ${blocked[before]?.url || "unknown"}`, "A page requested a disallowed origin"), durationMs: now() - t };
+      }
       return { stepId: step.id, ok: true, observed: { clicked: loc }, durationMs: now() - t };
     }
     if (type === "browser.fill") {
-      const loc = step.args?.locator as { role?: string; name?: string } | undefined;
+      const loc = step.args?.locator as { role?: string; name?: string; accessibleName?: string } | undefined;
       const value = step.args?.value;
       if (!loc) return { stepId: step.id, ok: false, error: makeError(ErrorCodes.MISSING_ARG, "locator missing", "Add locator"), durationMs: now() - t };
-      const locator = loc.role ? page.getByRole(loc.role as any, { name: loc.name }) : page.getByLabel(loc.name || "");
+      const name = loc.name ?? loc.accessibleName ?? "";
+      const locator = loc.role ? page.getByRole(loc.role as any, { name }) : page.getByLabel(name);
       await locator.first().fill(String(value ?? ""), { timeout: 15000 });
       return { stepId: step.id, ok: true, observed: { filled: loc, value }, durationMs: now() - t };
     }
     if (type === "browser.select") {
-      const loc = step.args?.locator as { role?: string; name?: string } | undefined;
+      const loc = step.args?.locator as { role?: string; name?: string; accessibleName?: string } | undefined;
       const value = step.args?.value;
-      const locator = loc?.role ? page.getByRole(loc.role as any, { name: loc.name }) : page.getByLabel(loc?.name || "");
+      const name = loc?.name ?? loc?.accessibleName ?? "";
+      const locator = loc?.role ? page.getByRole(loc.role as any, { name }) : page.getByLabel(name);
       await locator.first().selectOption(String(value ?? ""), { timeout: 15000 });
       return { stepId: step.id, ok: true, observed: { selected: value }, durationMs: now() - t };
     }
@@ -140,6 +169,9 @@ async function runBrowser(step: Step): Promise<StepResult> {
     }
     return { stepId: step.id, ok: false, error: makeError(ErrorCodes.INVALID_INPUT, `unknown browser action ${type}`, "Use browser.* steps"), durationMs: now() - t };
   } catch (e: unknown) {
+    if (blocked.length > before) {
+      return { stepId: step.id, ok: false, error: makeError(ErrorCodes.ORIGIN_NOT_ALLOWED, `request blocked: ${blocked[before]?.url || "unknown"}`, "A page requested a disallowed origin"), durationMs: now() - t };
+    }
     const err = e as { message?: string };
     return { stepId: step.id, ok: false, error: makeError(ErrorCodes.STEP_FAILED, err.message || "browser error", "Inspect observed"), durationMs: now() - t };
   }
@@ -173,6 +205,9 @@ export async function executeStep(step: Step): Promise<StepResult> {
         return runBrowser(fillStep);
       }
       if (kind === "ui_navigation") {
+        if (invoke.action === "goto" && invoke.url) {
+          return runBrowser({ ...step, action: "browser.goto", args: { url: invoke.url } });
+        }
         // navigation: click
         const clickStep: Step = { ...step, action: "browser.click", args: { locator: loc } };
         return runBrowser(clickStep);

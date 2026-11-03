@@ -54,10 +54,12 @@ AnyBridge does **not** call an LLM. It is a local MCP server that any assistant
 can drive: Claude, Codex, Gemini, OpenCode, or another MCP client. Bring your own
 model, or bring none for replay.
 
-For this hackathon build, development and reported evaluation results will use
-**Muse Spark 1.3 Contributor** (`muse-spark-1.3-contributor`) through Meta Model
-API. Contributor mode may use prompts for training, so this project uses
-synthetic fixtures only. The product itself remains provider-neutral.
+For this hackathon build, development and reported evaluation results use
+**Muse Spark 1.3 Contributor** (`muse-spark-1.3-contributor`). The canonical route
+is Meta Model API; when no `MODEL_API_KEY` is available, the same model through
+the OpenCode Go gateway is used and labelled as a fallback. Contributor mode may
+use prompts for training, so this project uses synthetic fixtures only. The
+product itself remains provider-neutral.
 
 ## Quick start
 
@@ -71,7 +73,11 @@ npx playwright install chromium
 npm run build
 npm test
 npm run doctor
+npm run fixture:reset
 ```
+
+The fixture app runs at `http://127.0.0.1:4010/tasks`; its state is
+`fixtures/app-a/data.json`.
 
 The server speaks MCP over stdio:
 
@@ -111,8 +117,9 @@ without my explicit approval.
    a numbered menu (`a1`, `a2`, …) with inputs and an effect label.
 3. **Propose.** The model picks menu IDs and submits a typed workflow with
    steps and independent checks. It never writes code, selectors, or URLs.
-4. **Approve.** A human approves the exact plan out-of-band. The model cannot
-   approve. *(Target design; not yet implemented in this alpha — see status.)*
+4. **Approve.** A human runs `anybridge approve <plan_id>` in a separate
+   terminal. The model cannot create the approval. Approvals are single-use,
+   hash-bound, and expire after 10 minutes.
 5. **Execute.** The engine resolves each step, re-checks policy, and runs it
    with argv arrays and bounded output. Destructive actions are denied by
    default.
@@ -170,18 +177,23 @@ vulnerability reporting is described in [`SECURITY.md`](SECURITY.md).
 - Seven MCP tools over stdio, with Zod input schemas and structured errors.
 - CLI discovery from help output and browser discovery from ARIA snapshots.
 - CLI/browser/filesystem step execution and a JSON workflow store.
+- Out-of-band approval CLI (`anybridge approve <plan_id>`): single-use,
+  hash-bound, 10-minute expiry; execution refuses without it.
+- Browser origin enforcement on every request, including link clicks and
+  redirects, plus allowlist checks during inspection.
+- Independent `file_contains` verification that reads the target file at
+  verification time.
+- Fixture app A (`fixtures/app-a`) with JSON state and a hostile Notes page.
 - Save and replay path with no model calls inside the server.
-- 11 unit tests; `npm run lint`, `npm run build`, and `npm test` pass.
+- 30 unit tests; `npm run lint`, `npm run build`, and `npm test` pass.
 
 ### Release blockers
 
-- [ ] Out-of-band approval CLI; the model can currently self-approve.
 - [ ] Policy re-checks on resolved steps at execution and replay.
-- [ ] Browser request interception for redirects, subresources, and navigation.
-- [ ] Independent verification instead of reading prior audit output.
 - [ ] Hash-pinned, versioned saved workflows.
 - [ ] Red-team suite with a 100% unsafe-action block gate.
-- [ ] Fixture app, eight measured tasks, and Contributor-model E0/eval runs.
+- [ ] Eight measured tasks and a direct Meta Model API E0/eval run.
+- [ ] Demo video and submission.
 
 ### Not in v0
 
@@ -192,8 +204,9 @@ calls inside the server.
 
 AnyBridge is being built during the **Meta Global AI Developer Hackathon**
 (Oct 26 – Nov 4, 2026). Development, E0, and all reported evaluation numbers use
-Muse Spark 1.3 Contributor through Meta Model API. The demo and measurements are
-being produced during the event window; no pre-event work is presented as new.
+Muse Spark 1.3 Contributor: Meta Model API when a key is available, otherwise the
+OpenCode Go gateway, labelled as a fallback. The demo and measurements are being
+produced during the event window; no pre-event work is presented as new.
 
 ## Documentation
 

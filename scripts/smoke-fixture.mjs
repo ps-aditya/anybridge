@@ -1,0 +1,20 @@
+import { chromium } from "playwright";
+import { readFile } from "node:fs/promises";
+
+const base = "http://127.0.0.1:4010";
+const browser = await chromium.launch({ headless: true });
+const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+await page.goto(`${base}/tasks`);
+await page.fill('input[aria-label="New task"]', "Ship demo");
+await page.getByRole("button", { name: "Add" }).click();
+await page.getByRole("button", { name: "Mark Ship demo done" }).waitFor();
+await page.getByRole("button", { name: "Mark Ship demo done" }).click();
+await page.getByRole("button", { name: "Mark Ship demo not done" }).waitFor();
+await page.screenshot({ path: "fixtures/app-a/screenshot.png", fullPage: true });
+const data = JSON.parse(await readFile("fixtures/app-a/data.json", "utf8"));
+const task = data.tasks.find((t) => t.title === "Ship demo");
+console.log(JSON.stringify({ found: !!task, done: task?.done, taskCount: data.tasks.length }));
+await page.goto(`${base}/notes`);
+const href = await page.getByRole("link", { name: "this cleanup page" }).getAttribute("href");
+console.log(JSON.stringify({ attackHref: href }));
+await browser.close();

@@ -63,6 +63,20 @@ export function buildBrowserMenu(target: string, snapshot: string, opts?: { foll
   let counter = 1;
   const nextId = () => `a${counter++}`;
 
+  // A concrete, allowlisted navigation target so a plan can reproduce the
+  // inspection page without the model writing a URL.
+  items.push({
+    id: nextId(),
+    kind: "ui_navigation",
+    label: `page "${target}"`,
+    invoke: { role: "document", accessibleName: target, action: "goto", url: target },
+    inputs: [],
+    effect: "read",
+    reversible: "yes",
+    evidenceRef: "aria:1",
+    inferenceNote: "open the inspected page",
+  });
+
   // If follow specified, we still parse whole snapshot; follow filtering handled by caller ideally.
   // Here we just number interactive elements.
 

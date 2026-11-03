@@ -12,7 +12,7 @@ export interface MenuItem {
   id: string; // a1, a2, ...
   kind: "cli_command" | "cli_flag" | "ui_action" | "ui_input" | "ui_navigation" | "file_io";
   label: string;
-  invoke: { argv?: string[] } | { role: string; accessibleName: string; action: string };
+  invoke: { argv?: string[] } | { role: string; accessibleName: string; action: string; url?: string };
   inputs: MenuInput[];
   effect: Effect;
   reversible: "yes" | "no" | "unknown";

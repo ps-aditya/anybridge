@@ -65,8 +65,14 @@ export async function inspectInterface(target: string, follow?: string): Promise
   // browser target: expect target like "browser:http://..." or origin
   if (target.startsWith("browser:")) {
     const origin = target.slice(8);
-    if (!getPolicy().allowedOrigins.includes(origin)) {
-      // allow any origin? policy deny; but for inspection maybe allow localhost
+    let parsed: URL;
+    try {
+      parsed = new URL(origin);
+    } catch {
+      return { error: makeError(ErrorCodes.INVALID_INPUT, `invalid origin ${origin}`, "Use browser:http://host:port") };
+    }
+    if (!getPolicy().allowedOrigins.includes(parsed.origin)) {
+      return { error: makeError(ErrorCodes.ORIGIN_NOT_ALLOWED, `origin ${parsed.origin} not allowed`, "Add the origin to policy first") };
     }
     // We don't fetch page here; return empty menu prompting use of snapshot? 
     // For tests, support a fixture snapshot via env? Instead, provide a helper to build from snapshot passed? 
@@ -75,7 +81,12 @@ export async function inspectInterface(target: string, follow?: string): Promise
       const pw = await import("playwright");
       const browser = await pw.chromium.launch({ headless: true });
       const page = await browser.newPage();
-      await page.goto(origin || target, { timeout: 15000 }).catch(() => {});
+      await page.goto(origin, { timeout: 15000 });
+      const landed = new URL(page.url()).origin;
+      if (landed !== parsed.origin) {
+        await browser.close();
+        return { error: makeError(ErrorCodes.ORIGIN_NOT_ALLOWED, `redirected to ${landed}`, "Tell the user") };
+      }
       // ARIA snapshot
       const snap = await page.ariaSnapshot({ timeout: 10000 }).catch(() => "");
       await browser.close();

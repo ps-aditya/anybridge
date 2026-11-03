@@ -11,10 +11,16 @@ const SNAP = `- heading "Inventory" [level=1]
 `;
 
 describe("browserMenu", () => {
-  it("numbers interactive elements", () => {
+  it("numbers interactive elements plus the inspected page", () => {
     const items = buildBrowserMenu("http://x", SNAP);
-    expect(items.length).toBeGreaterThanOrEqual(4);
-    expect(items.map((i) => i.id)).toEqual(["a1", "a2", "a3", "a4", "a5"]);
+    expect(items.length).toBeGreaterThanOrEqual(5);
+    expect(items.map((i) => i.id)).toEqual(["a1", "a2", "a3", "a4", "a5", "a6"]);
+  });
+  it("exposes the inspected page as a navigation action", () => {
+    const items = buildBrowserMenu("http://127.0.0.1:4010", SNAP);
+    const page = items[0];
+    expect(page?.kind).toBe("ui_navigation");
+    expect(page?.invoke).toMatchObject({ action: "goto", url: "http://127.0.0.1:4010" });
   });
   it("classifies delete as destructive", () => {
     const items = buildBrowserMenu("http://x", SNAP);

@@ -13,7 +13,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "tsc --noEmit",
-    "doctor": "node dist/doctor.js"
+    "doctor": "node dist/doctor.js",
+    "fixture": "node fixtures/app-a/server.mjs",
+    "fixture:reset": "node fixtures/app-a/server.mjs --reset"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",
