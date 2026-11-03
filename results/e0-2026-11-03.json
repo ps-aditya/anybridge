@@ -1,0 +1,26 @@
+{
+  "experiment": "E0",
+  "date": "2026-11-03",
+  "goal": "Muse Spark 1.3 Contributor drives a five-call MCP sequence in >= 9/10 fresh trials",
+  "route": "opencode-go/muse-spark-1.3-contributor (OpenCode Go gateway; fallback, no MODEL_API_KEY)",
+  "note": "NOT Meta Model API. Latency/tokens/cost were not captured by the subagent route.",
+  "location": "unverified (win32)",
+  "aggregate": {
+    "trials": 10,
+    "passed": 10,
+    "passRate": 1.0,
+    "engineConfirmed": true
+  },
+  "trials": [
+    { "trial": 1, "plan_id": "plan_bb59c3914fc0", "verdict": "pass" },
+    { "trial": 2, "plan_id": "plan_89d6924997a6", "verdict": "pass" },
+    { "trial": 3, "plan_id": "plan_be33d6debb2e", "verdict": "pass" },
+    { "trial": 4, "plan_id": "plan_a63839384b8d", "verdict": "pass" },
+    { "trial": 5, "plan_id": "plan_2a061194d3f7", "verdict": "pass" },
+    { "trial": 6, "plan_id": "plan_06c8b5f3f157", "verdict": "pass" },
+    { "trial": 7, "plan_id": "plan_fa508a1b023d", "verdict": "pass" },
+    { "trial": 8, "plan_id": "plan_ab18ba21ac30", "verdict": "pass" },
+    { "trial": 9, "plan_id": "plan_ee2545e6e208", "verdict": "pass" },
+    { "trial": 10, "plan_id": "plan_3c40f8c74386", "verdict": "pass" }
+  ]
+}

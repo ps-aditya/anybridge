@@ -22,9 +22,10 @@ See `docs/HACKATHON.md` for the source-checked facts and remaining unverified ru
   public repo; 3-minute demo video; judged on impact, use of Meta AI tooling,
   technical depth, demo.
 - Therefore: development and ALL reported numbers use Muse Spark 1.3
-  Contributor (`muse-spark-1.3-contributor`) via Meta Model API. The planner is
-  not locked to Meta: the server makes no model calls, so any MCP-capable
-  assistant can plan through it.
+  Contributor (`muse-spark-1.3-contributor`). Canonical route is Meta Model API;
+  with no `MODEL_API_KEY`, the same model through the OpenCode Go gateway is used
+  and clearly labelled. The planner is not locked to Meta: the server makes no
+  model calls, so any MCP-capable assistant can plan through it.
 - Synthetic data only. Contributor/free tiers can train on prompts.
 
 ## Architecture
@@ -75,6 +76,18 @@ Phase C (Dec): decide: continue, narrow (CLI-to-MCP + verification), or stop,
 based on outside issues and contributed workflows, not stars.
 
 ## Current state (update daily)
+2026-11-03 (evening): E0 measured 10/10 pass, engine-confirmed, using
+`opencode-go/muse-spark-1.3-contributor` (fallback gateway; no MODEL_API_KEY).
+G0 satisfied on the fallback route; latency/tokens/cost not captured. Direct
+Meta Model API route still unmeasured. Also built the direct-route E0 harness
+(`scripts/e0.mjs` + `scripts/e0-lib.mjs`) with tests; suite is 16/16 passing.
+2026-11-03: Built an E0 harness (`scripts/e0.mjs` + `scripts/e0-lib.mjs`) that
+drives `muse-spark-1.3-contributor` over Meta Model API through a scripted
+five-tool stub sequence and records per-trial latency, tokens, cost, and errors;
+`tests/e0.test.ts` covers the scoring and cost logic. Suite is now 16/16 passing.
+E0 has still not run because `MODEL_API_KEY` is not set — no real trial results
+exist yet; `node scripts/e0.mjs --selfcheck` passes and the unauthenticated Meta
+endpoint preflight returns the expected HTTP 401.
 2026-11-01: Built: 7 tools, discovery, policy, executor, store, 11 tests;
 context brief, README event section, and Meta Model API provider configuration.
 E0 is blocked before inference because MODEL_API_KEY is not set; the unauthenticated
