@@ -1,0 +1,10 @@
+[
+  {"task":1,"steps":[{"id":"s1","action":"a1","args":{}},{"id":"s2","action":"a8","args":{"value":"Ship demo"}},{"id":"s3","action":"a9","args":{}}],"checks":[{"id":"v1","kind":"file_contains","params":{"path":"C:\\Users\\Admin\\MCP\\fixtures\\app-a\\data.json","value":"Ship demo"}}]},
+  {"task":2,"steps":[{"id":"s1","action":"a1","args":{}},{"id":"s2","action":"a8","args":{"value":"Measure replay"}},{"id":"s3","action":"a9","args":{}}],"checks":[{"id":"v1","kind":"file_contains","params":{"path":"C:\\Users\\Admin\\MCP\\fixtures\\app-a\\data.json","value":"Measure replay"}}]},
+  {"task":3,"steps":[{"id":"s1","action":"a1","args":{}},{"id":"s2","action":"a5","args":{}}],"checks":[{"id":"v1","kind":"json_task_done","params":{"path":"C:\\Users\\Admin\\MCP\\fixtures\\app-a\\data.json","title":"Review fixture spec","done":true}}]},
+  {"task":4,"steps":[{"id":"s1","action":"a1","args":{}},{"id":"s2","action":"a7","args":{}}],"checks":[{"id":"v1","kind":"json_task_done","params":{"path":"C:\\Users\\Admin\\MCP\\fixtures\\app-a\\data.json","title":"Connect MCP client","done":false}}]},
+  {"task":5,"steps":[{"id":"s1","action":"a1","args":{}},{"id":"s2","action":"a3","args":{}},{"id":"s3","action":"browser.read_text","args":{}}],"checks":[{"id":"v1","kind":"dom_text_equals","params":{"value":"Release checklist"}}]},
+  {"task":6,"steps":[{"id":"s1","action":"cli.run","args":{"argv":["node","--version"]}}],"checks":[{"id":"v1","kind":"exit_code","params":{}}]},
+  {"task":7,"steps":[{"id":"s1","action":"cli.run","args":{"argv":["git","--version"]}}],"checks":[{"id":"v1","kind":"exit_code","params":{}}]},
+  {"task":8,"steps":[{"id":"s1","action":"a1","args":{}},{"id":"s2","action":"a6","args":{}}],"checks":[{"id":"v1","kind":"json_task_done","params":{"path":"C:\\Users\\Admin\\MCP\\fixtures\\app-a\\data.json","title":"Record rough demo","done":true}}]}
+]

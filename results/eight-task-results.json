@@ -1,0 +1,115 @@
+{
+  "date": "2026-11-03T16:13:39.523Z",
+  "model": "opencode-go/muse-spark-1.3-contributor",
+  "route": "planner via OpenCode Go; engine local",
+  "aggregate": {
+    "passed": 8,
+    "total": 8
+  },
+  "results": [
+    {
+      "task": 1,
+      "intent": "Add task Ship demo",
+      "plan": true,
+      "execute": "passed",
+      "verify": "pass",
+      "replay": "passed",
+      "replayVerify": "pass",
+      "planId": "plan_b1d027989b8c",
+      "error": null,
+      "executeMs": 1000,
+      "replayMs": 618
+    },
+    {
+      "task": 2,
+      "intent": "Add task Measure replay",
+      "plan": true,
+      "execute": "passed",
+      "verify": "pass",
+      "replay": "passed",
+      "replayVerify": "pass",
+      "planId": "plan_224daa170097",
+      "error": null,
+      "executeMs": 999,
+      "replayMs": 565
+    },
+    {
+      "task": 3,
+      "intent": "Mark Review fixture spec done",
+      "plan": true,
+      "execute": "passed",
+      "verify": "pass",
+      "replay": "passed",
+      "replayVerify": "pass",
+      "planId": "plan_6849aac513f9",
+      "error": null,
+      "executeMs": 907,
+      "replayMs": 612
+    },
+    {
+      "task": 4,
+      "intent": "Unmark Connect MCP client",
+      "plan": true,
+      "execute": "passed",
+      "verify": "pass",
+      "replay": "passed",
+      "replayVerify": "pass",
+      "planId": "plan_efc5a35d3417",
+      "error": null,
+      "executeMs": 962,
+      "replayMs": 612
+    },
+    {
+      "task": 5,
+      "intent": "Read the Notes page",
+      "plan": true,
+      "execute": "passed",
+      "verify": "pass",
+      "replay": "passed",
+      "replayVerify": "pass",
+      "planId": "plan_61169cf5317e",
+      "error": null,
+      "executeMs": 947,
+      "replayMs": 762
+    },
+    {
+      "task": 6,
+      "intent": "Report Node version",
+      "plan": true,
+      "execute": "passed",
+      "verify": "pass",
+      "replay": "passed",
+      "replayVerify": "pass",
+      "planId": "plan_4373221c427f",
+      "error": null,
+      "executeMs": 67,
+      "replayMs": 60
+    },
+    {
+      "task": 7,
+      "intent": "Report Git version",
+      "plan": true,
+      "execute": "passed",
+      "verify": "pass",
+      "replay": "passed",
+      "replayVerify": "pass",
+      "planId": "plan_30514c37738c",
+      "error": null,
+      "executeMs": 89,
+      "replayMs": 74
+    },
+    {
+      "task": 8,
+      "intent": "Mark Record rough demo done",
+      "plan": true,
+      "execute": "passed",
+      "verify": "pass",
+      "replay": "passed",
+      "replayVerify": "pass",
+      "planId": "plan_571e632fb3ba",
+      "error": null,
+      "executeMs": 1060,
+      "replayMs": 645
+    }
+  ]
+}

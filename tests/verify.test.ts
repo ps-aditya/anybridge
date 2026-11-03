@@ -15,12 +15,12 @@ beforeEach(async () => {
   setPolicy({ pathJail: dir });
 });
 
-async function runPlan(value: string) {
+async function runPlan(check: Record<string, unknown>) {
   const { proposeWorkflow, executeWorkflow, verifyOutcome } = await import("../src/workflow/index.js");
   const { createApproval } = await import("../src/approval/index.js");
   const plan = await proposeWorkflow("verify demo", [
     { id: "s1", action: "cli.run", args: { argv: ["node", "--version"] }, expect: "exit 0" },
-  ], [{ id: "v1", kind: "file_contains", params: { path: dataFile, value } }]);
+  ], [check as any]);
   if (!("plan_id" in plan)) throw new Error("propose failed");
   await createApproval(plan.plan_id, plan.hash);
   const run = await executeWorkflow(plan.plan_id, plan.hash);
@@ -30,15 +30,23 @@ async function runPlan(value: string) {
 
 describe("independent file verification", () => {
   it("passes by reading the file, not the audit", async () => {
-    const { run, verify } = await runPlan("Ship demo");
+    const { run, verify } = await runPlan({ id: "v1", kind: "file_contains", params: { path: dataFile, value: "Ship demo" } });
     expect(run.status).toBe("passed");
     expect(verify.verdict).toBe("pass");
     expect(JSON.stringify(verify.evidence)).toContain("file_contains");
   });
 
   it("fails when the file does not contain the value", async () => {
-    const { verify } = await runPlan("Not present");
+    const { verify } = await runPlan({ id: "v1", kind: "file_contains", params: { path: dataFile, value: "Not present" } });
     expect(verify.verdict).toBe("fail");
     expect(JSON.stringify(verify.evidence)).toContain("found");
+  });
+
+  it("checks a task's done state from JSON", async () => {
+    const pass = await runPlan({ id: "v1", kind: "json_task_done", params: { path: dataFile, title: "Ship demo", done: true } });
+    expect(pass.verify.verdict).toBe("pass");
+    const fail = await runPlan({ id: "v1", kind: "json_task_done", params: { path: dataFile, title: "Ship demo", done: false } });
+    expect(fail.verify.verdict).toBe("fail");
+    expect(JSON.stringify(fail.verify.evidence)).toContain("\"actual\":true");
   });
 });

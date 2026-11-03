@@ -47,7 +47,7 @@
   },
   "agent": {
     "anybridge": {
-      "description": "Operate unfamiliar tools via AnyBridge",
+      "description": "Operate unfamiliar tools via AnyBridge MCP",
       "prompt": "{file:./prompts/agent.md}",
       "temperature": 0.2
     }

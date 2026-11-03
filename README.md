@@ -192,10 +192,12 @@ vulnerability reporting is described in [`SECURITY.md`](SECURITY.md).
   are rejected.
 - Replay runs the saved checks and fails on drift.
 - Realpath path-jail check blocks junction/symlink escapes.
-- Red-team gate: 8/8 covered cases blocked; 45/45 tests pass.
+- Red-team gate: 8/8 covered cases blocked; 46/46 tests pass.
 - Fixture app A (`fixtures/app-a`) with JSON state and a hostile Notes page.
+- Eight measured tasks: 8/8 plan → execute → verify → replay
+  (`results/eight-task-results.md`).
 - Save and replay path with no model calls inside the server.
-- 45 unit tests; `npm run lint`, `npm run build`, and `npm test` pass.
+- 46 unit tests; `npm run lint`, `npm run build`, and `npm test` pass.
 
 ### Release blockers
 
@@ -223,6 +225,8 @@ produced during the event window; no pre-event work is presented as new.
 - [E0 protocol](docs/E0.md) — Meta runtime gate and trial record.
 - [Architecture review](docs/REVIEW-2026-11-01.md) — findings and failing-test sketches.
 - [Red-team gate](docs/REDTEAM.md) — covered cases, results, and limits.
+- [Measured tasks](docs/TASKS.md) — eight tasks and results.
+- [Demo script](docs/DEMO.md) — recording plan and facts.
 - [Hackathon facts](docs/HACKATHON.md) — source-checked rules and open questions.
 - [Security policy](SECURITY.md) — private reporting and testing rules.
 - [License](LICENSE) — MIT.

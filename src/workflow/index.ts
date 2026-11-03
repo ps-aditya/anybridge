@@ -107,6 +107,27 @@ async function evaluateChecks(checks: Check[], audit: Array<Record<string, unkno
           detail = { ...detail, path: targetPath, error: "file not readable" };
         }
       }
+    } else if (c.kind === "json_task_done") {
+      const targetPath = params.path as string | undefined;
+      const title = params.title as string | undefined;
+      const expected = params.done === undefined ? true : Boolean(params.done);
+      if (!targetPath || !title) {
+        pass = false;
+        detail = { ...detail, error: "path and title required" };
+      } else if (!isPathInJail(targetPath) || !(await isRealPathInJail(targetPath))) {
+        pass = false;
+        detail = { ...detail, error: "PATH_OUTSIDE_JAIL", path: targetPath };
+      } else {
+        try {
+          const parsed = JSON.parse(await fs.readFile(targetPath, "utf8"));
+          const task = Array.isArray(parsed.tasks) ? parsed.tasks.find((t: any) => t.title === title) : undefined;
+          pass = Boolean(task) && task.done === expected;
+          detail = { ...detail, path: targetPath, title, expected, found: Boolean(task), actual: task?.done };
+        } catch {
+          pass = false;
+          detail = { ...detail, path: targetPath, error: "file not readable" };
+        }
+      }
     } else if (c.kind === "exit_code") {
       pass = audit.every((a) => (a as any).ok === true);
       detail = { ...detail, allOk: pass };
@@ -158,7 +179,7 @@ export async function proposeWorkflow(
 
   // validate each step action exists as menu id or known type
   const knownPrefixes = ["cli.", "fs.", "browser."];
-  const allowedChecks = new Set(["exit_code", "file_contains", "file_exists", "file_hash_changed", "dom_text_equals", "dom_row_exists"]);
+  const allowedChecks = new Set(["exit_code", "file_contains", "file_exists", "file_hash_changed", "dom_text_equals", "dom_row_exists", "json_task_done"]);
   for (const c of checks || []) {
     if (!allowedChecks.has(c.kind)) {
       errors.push(makeError(ErrorCodes.INVALID_INPUT, `Unsupported check kind ${c.kind}`, "Use a documented verification kind"));

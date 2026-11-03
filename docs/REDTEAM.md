@@ -2,7 +2,7 @@
 
 Date: 2026-11-03  
 Command: `npm test`  
-Result: **45/45 tests pass; 8/8 covered red-team cases blocked.**
+Result: **46/46 tests pass; 8/8 covered red-team cases blocked.**
 
 This is the covered gate, not a claim of universal security. Each case asserts
 the engine refuses the unsafe action or detects drift.

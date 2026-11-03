@@ -76,6 +76,11 @@ Phase C (Dec): decide: continue, narrow (CLI-to-MCP + verification), or stop,
 based on outside issues and contributed workflows, not stars.
 
 ## Current state (update daily)
+2026-11-03 (measured tasks): Eight tasks measured 8/8 through plan → execute →
+verify → reset → replay, including browser add/toggle/read and CLI version tasks.
+Planner `muse-spark-1.3-contributor` via OpenCode Go required one schema
+correction before the eight plans validated; token/cost/planning latency not
+captured. Results in `results/eight-task-results.*` and `docs/TASKS.md`.
 2026-11-03 (hardening): Added hash-pinned/versioned workflow store, replay
 checks, replay policy re-check, realpath path jail, Node eval-flag denial, and
 red-team gate `docs/REDTEAM.md` (8/8 blocked; 45/45 tests). Demo replay passes
