@@ -34,7 +34,7 @@ These omissions are listed in `video/facts.json` under `limits`.
 
 - Remotion 4 (React) for composition and render.
 - Kokoro-82M (local Python, `kokoro-onnx`) for narration.
-- ffmpeg for final encode.
+- ffmpeg for final encode and audio normalization to -16 LUFS.
 
 ## Commands
 
