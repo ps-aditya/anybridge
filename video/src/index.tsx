@@ -5,6 +5,7 @@ import { Overview } from "./scenes/Overview";
 import { DemoPlan } from "./scenes/DemoPlan";
 import { DemoApprove } from "./scenes/DemoApprove";
 import { DemoVerify } from "./scenes/DemoVerify";
+import { Attack } from "./scenes/Attack";
 import { Metrics } from "./scenes/Metrics";
 import { Close } from "./scenes/Close";
 import { MockWatermark } from "./components/MockWatermark";
@@ -74,8 +75,9 @@ const AnyBridgeDemo: React.FC<{ facts: Facts }> = () => {
               {i === 2 && <DemoPlan />}
               {i === 3 && <DemoApprove />}
               {i === 4 && <DemoVerify />}
-              {i === 5 && <Metrics />}
-              {i === 6 && <Close />}
+              {i === 5 && <Attack />}
+              {i === 6 && <Metrics />}
+              {i === 7 && <Close />}
             </SceneWrapper>
           </Sequence>
         ))}

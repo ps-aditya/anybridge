@@ -30,6 +30,12 @@
     "sr": 24000
   },
   {
+    "id": "attack",
+    "duration": 10.88,
+    "samples": 261120,
+    "sr": 24000
+  },
+  {
     "id": "metrics",
     "duration": 8.64,
     "samples": 207360,

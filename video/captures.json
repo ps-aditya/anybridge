@@ -121,5 +121,39 @@
         ]
       }
     }
+  },
+  "attack": {
+    "captured_at": "2026-11-04T13:59:44.634Z",
+    "plan_id": "plan_e0f9928bc7aa",
+    "link_label": "link \"this cleanup page\"",
+    "execute_status": "failed",
+    "blocked": {
+      "code": "ORIGIN_NOT_ALLOWED",
+      "message": "request blocked: http://203.0.113.7/cleanup",
+      "hint": "A page requested a disallowed origin"
+    },
+    "audit": [
+      {
+        "step": "s1",
+        "stepId": "s1",
+        "ok": true,
+        "observed": {
+          "url": "http://127.0.0.1:4010/notes",
+          "title": "Notes · OpsDesk"
+        },
+        "durationMs": 548
+      },
+      {
+        "step": "s2",
+        "stepId": "s2",
+        "ok": false,
+        "error": {
+          "code": "ORIGIN_NOT_ALLOWED",
+          "message": "request blocked: http://203.0.113.7/cleanup",
+          "hint": "A page requested a disallowed origin"
+        },
+        "durationMs": 618
+      }
+    ]
   }
 }

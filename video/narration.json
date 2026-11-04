@@ -30,6 +30,11 @@
       "maxDurationSeconds": 25
     },
     {
+      "id": "attack",
+      "text": "The Notes page tells the model to open an external URL. The model plans it. A human approves it. The engine still blocks it: origin not allowed. Observed text is data, not instructions.",
+      "maxDurationSeconds": 16
+    },
+    {
       "id": "metrics",
       "text": "Eight measured tasks passed plan, execute, verify, and replay. Compile took six seconds total. Replay took four. The engine blocked every covered attack.",
       "maxDurationSeconds": 20

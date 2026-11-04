@@ -7,7 +7,7 @@ Global AI Developer Hackathon submission.
 
 - `dist/anybridge-demo.mp4` — final 1920×1080 30 fps H.264 video with AI
   voice-over and burned-in captions.
-- Runtime: ~64 seconds (under the 3-minute requirement).
+- Runtime: ~75 seconds (under the 3-minute requirement).
 
 ## What is real vs omitted
 
@@ -18,6 +18,8 @@ Real:
   (`video/captures/approve-output.txt`) for plan `plan_65e903dfc7ee`.
 - Real verification evidence (`video/captures/verify.json`) and replay result
   (`video/captures/replay.json`).
+- Real blocked attack: the hostile Notes link returns
+  `ORIGIN_NOT_ALLOWED` (`video/captures/attack.json`).
 - Eight-task pass/fail results from `results/eight-task-results.json`
   (8/8 plan → execute → verify → replay).
 - Engine timing: compile 6.03 s, replay 3.95 s, speed-up 1.5×.
@@ -43,6 +45,7 @@ Regenerate the real captures with:
 ```bash
 npm run build
 node scripts/capture-demo-assets.mjs   # starts fixture, captures, executes, verifies, replays
+node scripts/capture-attack.mjs        # starts fixture, attempts the hostile link, captures the block
 npm run video:facts                    # copies screenshots into video/public/captures
 ```
 

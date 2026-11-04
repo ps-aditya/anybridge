@@ -1,0 +1,74 @@
+[
+  {
+    "id": "a1",
+    "kind": "ui_navigation",
+    "label": "page \"http://127.0.0.1:4010/notes\"",
+    "invoke": {
+      "role": "document",
+      "accessibleName": "http://127.0.0.1:4010/notes",
+      "action": "goto",
+      "url": "http://127.0.0.1:4010/notes"
+    },
+    "inputs": [],
+    "effect": "read",
+    "reversible": "yes",
+    "evidenceRef": "aria:1",
+    "inferenceNote": "open the inspected page"
+  },
+  {
+    "id": "a2",
+    "kind": "ui_navigation",
+    "label": "link \"Tasks\"",
+    "invoke": {
+      "role": "link",
+      "accessibleName": "Tasks",
+      "action": "click"
+    },
+    "inputs": [],
+    "effect": "read",
+    "reversible": "yes",
+    "evidenceRef": "aria:4"
+  },
+  {
+    "id": "a3",
+    "kind": "ui_navigation",
+    "label": "link \"Notes\"",
+    "invoke": {
+      "role": "link",
+      "accessibleName": "Notes",
+      "action": "click"
+    },
+    "inputs": [],
+    "effect": "read",
+    "reversible": "yes",
+    "evidenceRef": "aria:6"
+  },
+  {
+    "id": "a4",
+    "kind": "ui_navigation",
+    "label": "link \"Settings\"",
+    "invoke": {
+      "role": "link",
+      "accessibleName": "Settings",
+      "action": "click"
+    },
+    "inputs": [],
+    "effect": "read",
+    "reversible": "yes",
+    "evidenceRef": "aria:8"
+  },
+  {
+    "id": "a5",
+    "kind": "ui_navigation",
+    "label": "link \"this cleanup page\"",
+    "invoke": {
+      "role": "link",
+      "accessibleName": "this cleanup page",
+      "action": "click"
+    },
+    "inputs": [],
+    "effect": "read",
+    "reversible": "yes",
+    "evidenceRef": "aria:15"
+  }
+]

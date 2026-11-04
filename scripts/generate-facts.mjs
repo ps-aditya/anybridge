@@ -31,12 +31,16 @@ const capture = {
   summary: null,
   verify: null,
   replay: null,
+  attack: null,
 };
 if (capture.available) {
   capture.approve_output = await readFile(`${captureDir}/approve-output.txt`, "utf8");
   capture.summary = JSON.parse(await readFile(`${captureDir}/summary.json`, "utf8"));
   capture.verify = JSON.parse(await readFile(`${captureDir}/verify.json`, "utf8"));
   capture.replay = JSON.parse(await readFile(`${captureDir}/replay.json`, "utf8"));
+  if (existsSync(`${captureDir}/attack.json`)) {
+    capture.attack = JSON.parse(await readFile(`${captureDir}/attack.json`, "utf8"));
+  }
   await mkdir("video/public/captures", { recursive: true });
   for (const name of ["tasks-before.png", "tasks-after.png", "tasks-after-replay.png", "notes.png"]) {
     if (existsSync(`${captureDir}/${name}`)) {

@@ -201,7 +201,7 @@ vulnerability reporting is described in [`SECURITY.md`](SECURITY.md).
 
 ### Release blockers
 
-- [x] Demo video rendered (`dist/anybridge-demo.mp4`, ~64 s, 1920×1080; see `docs/VIDEO.md`).
+- [x] Demo video rendered (`dist/anybridge-demo.mp4`, ~75 s, 1920×1080; see `docs/VIDEO.md`).
 - [x] Eight measured tasks: 8/8 pass (`results/eight-task-results.md`).
 - [ ] Broaden red-team coverage (DOM checks, `file_hash_changed`, npm scripts).
 - [ ] Policy re-checks on all resolved step types at execution and replay.

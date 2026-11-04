@@ -9,8 +9,8 @@ the copy below is written to paste into common fields. Replace anything in
 
 - Repo: https://github.com/ps-aditya/anybridge (public, MIT)
 - Tag: `v0.1.0-hackathon`
-- Video: `dist/anybridge-demo.mp4` — 1920×1080, 30 fps, 64.2 s, H.264/AAC,
-  6.02 MB, audio normalized to -16 LUFS
+- Video: `dist/anybridge-demo.mp4` — 1920×1080, 30 fps, 75.2 s, H.264/AAC,
+  6.76 MB, audio normalized to -16 LUFS
 - QA: `npm run video:qa` passes; narration locked; `facts.mock: false`
 - Tests: 46/46 pass; lint and build pass
 
@@ -48,9 +48,11 @@ What the demo shows:
 0:18 Plan from a numbered menu, using menu IDs only, against the real fixture app.
 0:28 Human approval in a separate terminal: single-use, hash-bound, 10-minute expiry.
 0:36 Verification reads fixtures/app-a/data.json, not the UI; then save and replay.
-0:47 Measured results: 8/8 tasks passed plan → execute → verify → replay,
+0:47 A hostile Notes page asks the model to open an external URL; the approved
+     plan is blocked with ORIGIN_NOT_ALLOWED. Observed text is data.
+0:58 Measured results: 8/8 tasks passed plan → execute → verify → replay,
      0 model calls on replay, 8/8 covered red-team cases blocked.
-0:56 Repository, license, credits.
+1:07 Repository, license, credits.
 
 Repo: https://github.com/ps-aditya/anybridge
 Docs: https://github.com/ps-aditya/anybridge/tree/main/docs

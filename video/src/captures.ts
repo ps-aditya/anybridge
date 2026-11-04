@@ -28,6 +28,13 @@ export interface CaptureData {
       };
     };
   } | null;
+  attack: {
+    captured_at: string;
+    plan_id: string;
+    link_label: string;
+    execute_status: string;
+    blocked: { code: string; message: string; hint?: string } | null;
+  } | null;
 }
 
 export const getCaptures = (): CaptureData => data as CaptureData;

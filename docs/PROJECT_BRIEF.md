@@ -77,7 +77,7 @@ based on outside issues and contributed workflows, not stars.
 
 ## Current state (update daily)
 2026-11-04 (demo video): Automated Remotion + Kokoro pipeline produced
-`dist/anybridge-demo.mp4` (1920×1080, ~64 s, AI voice-over, burned-in captions).
+`dist/anybridge-demo.mp4` (1920×1080, ~75 s, AI voice-over, burned-in captions).
 Facts driven by `results/eight-task-results.json`; omitted scenes and limits
 listed in `video/facts.json` and `docs/VIDEO.md`. QA passes; narration locked;
 repo tagged `v0.1.0-hackathon`.
