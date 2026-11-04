@@ -1,6 +1,8 @@
 # Submission pack — Meta Global AI Developer Hackathon
 
-Status checked 2026-11-04. Deadline listed on the event page: **Nov 4, 9:00 PM ET**.
+Status checked 2026-11-04. Deadline listed on the event page: **Nov 4, 9:00 PM ET**
+(= Nov 5, 7:30 AM IST). Organizer announcements confirm two hard requirements:
+the GitHub repo must be open source, and the demo video should be about 3 minutes.
 The event page does not expose the submission form fields without signing in, so
 the copy below is written to paste into common fields. Replace anything in
 [brackets].
@@ -161,6 +163,70 @@ Limits
 - Direct Meta Model API E0 not measured; fallback route is labelled.
 - Planning tokens/cost not captured.
 - Desktop automation, remote hosting, and a marketplace are out of v0.
+```
+
+### Short pitch (≤ 300 chars)
+
+```text
+AnyBridge turns software with no API into permissioned, verified, replayable
+workflows. The model picks IDs from a numbered menu, a human approves out of
+band, the engine executes and verifies from file evidence, and replay needs zero
+model calls.
+```
+
+### How did you use Meta AI?
+
+```text
+Muse Spark 1.3 Contributor (muse-spark-1.3-contributor) is the planner: it reads
+the numbered menu and emits a typed JSON workflow; it never writes selectors,
+shell strings, URLs, or code. All reported development and evaluation numbers
+use that model. The canonical route is Meta Model API; because no MODEL_API_KEY
+was available in this environment, the same model was used through the OpenCode
+Go gateway and is clearly labelled as a fallback. AnyBridge's server makes zero
+model calls, so the product stays model-agnostic.
+```
+
+### Biggest technical challenge
+
+```text
+Making success provable. Browser-control servers return "done"; AnyBridge
+re-reads a file or the DOM after execution and only passes on engine-computed
+evidence. The same engine enforces out-of-band, single-use, hash-bound approval,
+an origin allowlist on every request and redirect, a realpath path jail, and
+hash-pinned replay that fails on drift.
+```
+
+### Accomplishments
+
+```text
+8/8 measured tasks passed plan → execute → verify → replay with 0 model calls on
+replay. Engine time: 6.03 s compile vs 3.95 s replay across 8 tasks. 8/8 covered
+red-team cases blocked; 46/46 tests pass. The demo includes a real blocked
+prompt-injection attempt: an approved plan clicks a hostile link and the engine
+returns ORIGIN_NOT_ALLOWED.
+```
+
+### What's next
+
+```text
+Drift repair when a UI changes, held-out apps beyond fixture A, a `doctor`
+command, an npm alpha with provenance, and community workflow packs.
+```
+
+### Try it out
+
+```text
+git clone https://github.com/ps-aditya/anybridge.git
+cd anybridge
+npm install
+npx playwright install chromium
+npm run build
+npm test
+npm run doctor
+# separate terminal:
+npm run fixture:reset
+# register `node dist/index.js` as an MCP server, then ask:
+# "Inspect http://127.0.0.1:4010 and propose a plan to add a task titled Ship demo."
 ```
 
 ### Built with
