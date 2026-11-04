@@ -1,0 +1,11 @@
+AnyBridge approval
+Plan:     plan_65e903dfc7ee
+Intent:   Add task Ship demo
+Hash:     f18d9ff0c7cc4db0b03b5ccfdf6dd16f
+Steps:    3
+  s1  a1  effect=read
+  s2  a8  effect=write
+  s3  a9  effect=write
+Checks:   1
+
+Type yes to approve this exact plan: Approved · single use · expires 2026-11-04T13:11:33.949Z (10m)

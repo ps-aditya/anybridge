@@ -60,8 +60,8 @@ Honest limits:
 - Direct Meta Model API E0 was not run (no MODEL_API_KEY); E0 used the same
   model via the OpenCode Go fallback.
 - Planning token counts and cost were not exposed by that route and are not shown.
-- The demo uses code/text scenes for the product walkthrough; no browser video
-  clips were recorded.
+- The demo uses real fixture screenshots and captured CLI output, but no
+  continuous browser video was recorded.
 
 Voice: Kokoro-82M (local, synthetic). Narration drafted with Muse Spark 1.3.
 ```

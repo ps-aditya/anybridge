@@ -1,0 +1,57 @@
+{
+  "plan_id": "plan_65e903dfc7ee",
+  "executed": {
+    "plan_id": "plan_65e903dfc7ee",
+    "status": "passed",
+    "audit": [
+      {
+        "step": "s1",
+        "stepId": "s1",
+        "ok": true,
+        "observed": {
+          "url": "http://127.0.0.1:4010/",
+          "title": "Tasks · OpsDesk"
+        },
+        "durationMs": 405
+      },
+      {
+        "step": "s2",
+        "stepId": "s2",
+        "ok": true,
+        "observed": {
+          "filled": {
+            "role": "textbox",
+            "accessibleName": "New task"
+          },
+          "value": "Ship demo"
+        },
+        "durationMs": 146
+      },
+      {
+        "step": "s3",
+        "stepId": "s3",
+        "ok": true,
+        "observed": {
+          "clicked": {
+            "role": "button",
+            "accessibleName": "Add"
+          }
+        },
+        "durationMs": 459
+      }
+    ]
+  },
+  "verified": {
+    "plan_id": "plan_65e903dfc7ee",
+    "verdict": "pass",
+    "evidence": [
+      {
+        "check": "v1",
+        "kind": "file_contains",
+        "path": "C:\\Users\\Admin\\MCP\\fixtures\\app-a\\data.json",
+        "target": "Ship demo",
+        "found": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "available": true,
+  "approve_output": "AnyBridge approval\nPlan:     plan_65e903dfc7ee\nIntent:   Add task Ship demo\nHash:     f18d9ff0c7cc4db0b03b5ccfdf6dd16f\nSteps:    3\n  s1  a1  effect=read\n  s2  a8  effect=write\n  s3  a9  effect=write\nChecks:   1\n\nType yes to approve this exact plan: Approved · single use · expires 2026-11-04T13:11:33.949Z (10m)\n",
+  "summary": {
+    "captured_at": "2026-11-04T13:01:37.120Z",
+    "plan_id": "plan_65e903dfc7ee",
+    "execute_status": "passed",
+    "verify_verdict": "pass",
+    "replay_status": "passed",
+    "replay_verdict": "pass"
+  },
+  "verify": {
+    "plan_id": "plan_65e903dfc7ee",
+    "executed": {
+      "plan_id": "plan_65e903dfc7ee",
+      "status": "passed",
+      "audit": [
+        {
+          "step": "s1",
+          "stepId": "s1",
+          "ok": true,
+          "observed": {
+            "url": "http://127.0.0.1:4010/",
+            "title": "Tasks · OpsDesk"
+          },
+          "durationMs": 405
+        },
+        {
+          "step": "s2",
+          "stepId": "s2",
+          "ok": true,
+          "observed": {
+            "filled": {
+              "role": "textbox",
+              "accessibleName": "New task"
+            },
+            "value": "Ship demo"
+          },
+          "durationMs": 146
+        },
+        {
+          "step": "s3",
+          "stepId": "s3",
+          "ok": true,
+          "observed": {
+            "clicked": {
+              "role": "button",
+              "accessibleName": "Add"
+            }
+          },
+          "durationMs": 459
+        }
+      ]
+    },
+    "verified": {
+      "plan_id": "plan_65e903dfc7ee",
+      "verdict": "pass",
+      "evidence": [
+        {
+          "check": "v1",
+          "kind": "file_contains",
+          "path": "C:\\Users\\Admin\\MCP\\fixtures\\app-a\\data.json",
+          "target": "Ship demo",
+          "found": true
+        }
+      ]
+    }
+  },
+  "replay": {
+    "replay": {
+      "plan_id": "capture-add-ship-demo",
+      "status": "passed",
+      "audit": [
+        {
+          "step": "s1",
+          "stepId": "s1",
+          "ok": true,
+          "observed": {
+            "url": "http://127.0.0.1:4010/",
+            "title": "Tasks · OpsDesk"
+          },
+          "durationMs": 79
+        },
+        {
+          "step": "s2",
+          "stepId": "s2",
+          "ok": true,
+          "observed": {
+            "filled": {
+              "role": "textbox",
+              "accessibleName": "New task"
+            },
+            "value": "Ship demo"
+          },
+          "durationMs": 44
+        },
+        {
+          "step": "s3",
+          "stepId": "s3",
+          "ok": true,
+          "observed": {
+            "clicked": {
+              "role": "button",
+              "accessibleName": "Add"
+            }
+          },
+          "durationMs": 356
+        }
+      ],
+      "verification": {
+        "plan_id": "capture-add-ship-demo",
+        "verdict": "pass",
+        "evidence": [
+          {
+            "check": "v1",
+            "kind": "file_contains",
+            "path": "C:\\Users\\Admin\\MCP\\fixtures\\app-a\\data.json",
+            "target": "Ship demo",
+            "found": true
+          }
+        ]
+      }
+    }
+  }
+}

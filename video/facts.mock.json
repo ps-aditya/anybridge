@@ -43,7 +43,7 @@
   },
   "limits": [
     "Planning model-call count and cost were not captured by the OpenCode Go subagent route; no MODEL_API_KEY was available.",
-    "No browser video clips (runs/*/browser.mp4) or audit jsonl (runs/*/audit.jsonl) were recorded; demo scenes use real screenshots and text instead.",
+    "The demo uses real screenshots and captured CLI output, but no continuous browser video or audit jsonl was recorded.",
     "Direct Meta Model API E0 was not run; E0 result is from the same model via the OpenCode Go fallback and is labelled as such.",
     "This file is the mock placeholder; regenerate with real captures to set mock: false."
   ],

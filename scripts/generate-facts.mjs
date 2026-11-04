@@ -1,4 +1,4 @@
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, writeFile, mkdir, copyFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 
 const resultsPath = "results/eight-task-results.json";
@@ -19,9 +19,31 @@ const replaySeconds = replayMs.reduce((a, b) => a + b, 0) / 1000;
 // route used for the eight tasks. Do not invent them.
 const limits = [
   "Planning model-call count and cost were not captured by the OpenCode Go subagent route; no MODEL_API_KEY was available.",
-  "No browser video clips (runs/*/browser.mp4) or audit jsonl (runs/*/audit.jsonl) were recorded; demo scenes use real screenshots and text instead.",
+  "The demo uses real screenshots and captured CLI output, but no continuous browser video or audit jsonl was recorded.",
   "Direct Meta Model API E0 was not run; E0 result is from the same model via the OpenCode Go fallback and is labelled as such.",
 ];
+
+// Real capture assets from scripts/capture-demo-assets.mjs
+const captureDir = "video/captures";
+const capture = {
+  available: existsSync(`${captureDir}/summary.json`),
+  approve_output: "",
+  summary: null,
+  verify: null,
+  replay: null,
+};
+if (capture.available) {
+  capture.approve_output = await readFile(`${captureDir}/approve-output.txt`, "utf8");
+  capture.summary = JSON.parse(await readFile(`${captureDir}/summary.json`, "utf8"));
+  capture.verify = JSON.parse(await readFile(`${captureDir}/verify.json`, "utf8"));
+  capture.replay = JSON.parse(await readFile(`${captureDir}/replay.json`, "utf8"));
+  await mkdir("video/public/captures", { recursive: true });
+  for (const name of ["tasks-before.png", "tasks-after.png", "tasks-after-replay.png", "notes.png"]) {
+    if (existsSync(`${captureDir}/${name}`)) {
+      await copyFile(`${captureDir}/${name}`, `video/public/captures/${name}`);
+    }
+  }
+}
 
 const facts = {
   mock: false,
@@ -66,6 +88,7 @@ const mockFacts = { ...facts, mock: true, limits: [...limits, "This file is the 
 
 await writeFile("video/facts.json", JSON.stringify(facts, null, 2));
 await writeFile("video/facts.mock.json", JSON.stringify(mockFacts, null, 2));
+await writeFile("video/captures.json", JSON.stringify(capture, null, 2));
 
 console.log("wrote video/facts.json");
 console.log(`compile seconds: ${compileSeconds.toFixed(3)}`);

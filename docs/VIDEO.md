@@ -12,6 +12,12 @@ Global AI Developer Hackathon submission.
 ## What is real vs omitted
 
 Real:
+- Screenshots of the actual fixture app before and after execution
+  (`video/captures/tasks-before.png`, `tasks-after.png`), captured with Playwright.
+- Captured stdout from the real `anybridge approve <plan_id>` CLI
+  (`video/captures/approve-output.txt`) for plan `plan_65e903dfc7ee`.
+- Real verification evidence (`video/captures/verify.json`) and replay result
+  (`video/captures/replay.json`).
 - Eight-task pass/fail results from `results/eight-task-results.json`
   (8/8 plan → execute → verify → replay).
 - Engine timing: compile 6.03 s, replay 3.95 s, speed-up 1.5×.
@@ -21,14 +27,27 @@ Real:
   (`opencode-go/muse-spark-1.3-contributor`).
 
 Omitted:
-- No browser video clips (`runs/*/browser.mp4`) or audit jsonl
-  (`runs/*/audit.jsonl`) were recorded; demo scenes use styled code/text
-  representations instead.
+- No continuous browser video (`runs/*/browser.mp4`) or audit jsonl
+  (`runs/*/audit.jsonl`) was recorded; the demo uses real still captures and
+  the real CLI transcript instead.
 - Planning model-call count and cost are not captured by the OpenCode Go
   subagent route and are not shown.
 - Direct Meta Model API E0 was not run; E0 is from the OpenCode Go fallback.
 
 These omissions are listed in `video/facts.json` under `limits`.
+
+## Capture assets
+
+Regenerate the real captures with:
+
+```bash
+npm run build
+node scripts/capture-demo-assets.mjs   # starts fixture, captures, executes, verifies, replays
+npm run video:facts                    # copies screenshots into video/public/captures
+```
+
+The approval input is piped as `yes` for this recording; the real path is
+interactive and is noted on screen.
 
 ## Toolchain
 
