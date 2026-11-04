@@ -7,7 +7,7 @@ Global AI Developer Hackathon submission.
 
 - `dist/anybridge-demo.mp4` — final 1920×1080 30 fps H.264 video with AI
   voice-over and burned-in captions.
-- Runtime: ~74 seconds (under the 3-minute requirement).
+- Runtime: ~64 seconds (under the 3-minute requirement).
 
 ## What is real vs omitted
 

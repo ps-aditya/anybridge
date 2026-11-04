@@ -1,44 +1,44 @@
 [
   {
     "id": "intro",
-    "duration": 9.579,
-    "samples": 229888,
+    "duration": 8.277,
+    "samples": 198656,
     "sr": 24000
   },
   {
     "id": "overview",
-    "duration": 11.307,
-    "samples": 271360,
+    "duration": 9.664,
+    "samples": 231936,
     "sr": 24000
   },
   {
     "id": "demo-plan",
-    "duration": 11.477,
-    "samples": 275456,
+    "duration": 10.005,
+    "samples": 240128,
     "sr": 24000
   },
   {
     "id": "demo-approve",
-    "duration": 8.683,
-    "samples": 208384,
+    "duration": 7.552,
+    "samples": 181248,
     "sr": 24000
   },
   {
     "id": "demo-verify",
-    "duration": 12.544,
-    "samples": 301056,
+    "duration": 10.944,
+    "samples": 262656,
     "sr": 24000
   },
   {
     "id": "metrics",
-    "duration": 9.856,
-    "samples": 236544,
+    "duration": 8.64,
+    "samples": 207360,
     "sr": 24000
   },
   {
     "id": "close",
-    "duration": 9.344,
-    "samples": 224256,
+    "duration": 7.957,
+    "samples": 190976,
     "sr": 24000
   }
 ]

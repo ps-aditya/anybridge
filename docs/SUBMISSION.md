@@ -9,8 +9,8 @@ the copy below is written to paste into common fields. Replace anything in
 
 - Repo: https://github.com/ps-aditya/anybridge (public, MIT)
 - Tag: `v0.1.0-hackathon`
-- Video: `dist/anybridge-demo.mp4` — 1920×1080, 30 fps, 73.9 s, H.264/AAC,
-  6.37 MB, audio normalized to -16 LUFS
+- Video: `dist/anybridge-demo.mp4` — 1920×1080, 30 fps, 64.2 s, H.264/AAC,
+  6.02 MB, audio normalized to -16 LUFS
 - QA: `npm run video:qa` passes; narration locked; `facts.mock: false`
 - Tests: 46/46 pass; lint and build pass
 
@@ -45,12 +45,12 @@ server itself makes zero model calls, so any MCP-capable assistant can drive it.
 What the demo shows:
 0:00 The problem: assistants only use tools that already have integrations.
 0:08 How it works: discover → plan → approve → execute → verify → save → replay.
-0:21 Plan from a numbered menu, using menu IDs only.
-0:33 Human approval in a separate terminal: single-use, hash-bound, 10-minute expiry.
-0:43 Verification reads fixtures/app-a/data.json, not the UI.
-0:54 Measured results: 8/8 tasks passed plan → execute → verify → replay,
+0:18 Plan from a numbered menu, using menu IDs only, against the real fixture app.
+0:28 Human approval in a separate terminal: single-use, hash-bound, 10-minute expiry.
+0:36 Verification reads fixtures/app-a/data.json, not the UI; then save and replay.
+0:47 Measured results: 8/8 tasks passed plan → execute → verify → replay,
      0 model calls on replay, 8/8 covered red-team cases blocked.
-1:06 Repository, license, credits.
+0:56 Repository, license, credits.
 
 Repo: https://github.com/ps-aditya/anybridge
 Docs: https://github.com/ps-aditya/anybridge/tree/main/docs
@@ -63,7 +63,8 @@ Honest limits:
 - The demo uses real fixture screenshots and captured CLI output, but no
   continuous browser video was recorded.
 
-Voice: Kokoro-82M (local, synthetic). Narration drafted with Muse Spark 1.3.
+Voice: Kokoro-82M (local, synthetic; Spanish male voice `em_santa`).
+Narration drafted with Muse Spark 1.3.
 ```
 
 ### Tags

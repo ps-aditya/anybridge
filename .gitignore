@@ -11,6 +11,7 @@ fixtures/app-a/data.json
 tools/
 video/node_modules/
 video/public/audio/
+video/voice-samples/
 video/package-lock.json
 scripts/tts-run.py
 .agents/
