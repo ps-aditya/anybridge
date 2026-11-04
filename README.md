@@ -201,10 +201,12 @@ vulnerability reporting is described in [`SECURITY.md`](SECURITY.md).
 
 ### Release blockers
 
+- [x] Demo video rendered (`dist/anybridge-demo.mp4`, ~74 s, 1920×1080; see `docs/VIDEO.md`).
+- [x] Eight measured tasks: 8/8 pass (`results/eight-task-results.md`).
 - [ ] Broaden red-team coverage (DOM checks, `file_hash_changed`, npm scripts).
 - [ ] Policy re-checks on all resolved step types at execution and replay.
-- [ ] Eight measured tasks and a direct Meta Model API E0/eval run.
-- [ ] Demo video and submission.
+- [ ] Direct Meta Model API E0/eval run when `MODEL_API_KEY` is available.
+- [ ] Submission form and YouTube upload.
 
 ### Not in v0
 
