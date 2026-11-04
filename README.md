@@ -8,6 +8,8 @@
 
 **See an interface. Turn it into a permissioned workflow. Verify the result. Replay it with no model calls.**
 
+▶ **[Watch the 75-second demo](https://www.youtube.com/watch?v=Y-7mkiYVjm4)**
+
 [![license](https://img.shields.io/badge/license-MIT-f4c430?style=flat-square)](LICENSE)
 [![MCP tools](https://img.shields.io/badge/MCP-7_tools-2563eb?style=flat-square)](src/server.ts)
 [![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A520-339933?style=flat-square&logo=nodedotjs&logoColor=white)](package.json)

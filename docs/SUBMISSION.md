@@ -156,7 +156,7 @@ Evidence
 
 Links
 Repo: https://github.com/ps-aditya/anybridge
-Video: [paste YouTube URL]
+Video: https://www.youtube.com/watch?v=Y-7mkiYVjm4
 Docs: https://github.com/ps-aditya/anybridge/tree/main/docs
 
 Limits
