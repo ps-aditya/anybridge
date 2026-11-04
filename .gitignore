@@ -7,3 +7,10 @@ dist/
 coverage/
 *.log
 fixtures/app-a/data.json
+.venv/
+tools/
+video/node_modules/
+video/public/audio/
+video/package-lock.json
+scripts/tts-run.py
+.agents/

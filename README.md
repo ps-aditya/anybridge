@@ -226,7 +226,8 @@ produced during the event window; no pre-event work is presented as new.
 - [Architecture review](docs/REVIEW-2026-11-01.md) — findings and failing-test sketches.
 - [Red-team gate](docs/REDTEAM.md) — covered cases, results, and limits.
 - [Measured tasks](docs/TASKS.md) — eight tasks and results.
-- [Demo script](docs/DEMO.md) — recording plan and facts.
+- [Demo video pipeline](docs/VIDEO.md) — automated Remotion + Kokoro build.
+- [Master prompt](docs/VIDEO_PROMPT.md) — video agent instructions and provenance.
 - [Hackathon facts](docs/HACKATHON.md) — source-checked rules and open questions.
 - [Security policy](SECURITY.md) — private reporting and testing rules.
 - [License](LICENSE) — MIT.

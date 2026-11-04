@@ -4,7 +4,9 @@
   "description": "Operate software that has no ready-made integration: discover, plan, approve, execute, verify, save, replay.",
   "type": "module",
   "main": "dist/index.js",
-  "bin": { "anybridge": "./dist/index.js" },
+  "bin": {
+    "anybridge": "./dist/index.js"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/index.ts",
@@ -15,19 +17,31 @@
     "lint": "tsc --noEmit",
     "doctor": "node dist/doctor.js",
     "fixture": "node fixtures/app-a/server.mjs",
-    "fixture:reset": "node fixtures/app-a/server.mjs --reset"
+    "fixture:reset": "node fixtures/app-a/server.mjs --reset",
+    "video:facts": "node scripts/generate-facts.mjs",
+    "video:tts": "node scripts/tts.mjs",
+    "video:render": "node scripts/render-video.mjs",
+    "video:qa": "node scripts/qa-video.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",
+    "@remotion/cli": "^4.0.540",
+    "@remotion/media-utils": "^4.0.540",
+    "@remotion/transitions": "^4.0.540",
     "playwright": "^1.49.0",
-    "zod": "^3.24.0"
+    "remotion": "^4.0.540",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0",
     "vitest": "^2.1.0"
   },
   "license": "MIT",
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  }
 }

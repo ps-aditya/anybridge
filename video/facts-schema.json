@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AnyBridge Demo Facts",
+  "type": "object",
+  "required": ["mock", "run_ids", "model", "compile", "replay", "verify", "redteam", "eval", "limits", "repo", "install"],
+  "properties": {
+    "mock": { "type": "boolean", "description": "If true, release build must be refused and watermark shown" },
+    "run_ids": {
+      "type": "object",
+      "properties": {
+        "compile": { "type": "string" },
+        "replay": { "type": "string" },
+        "attack": { "type": "string" }
+      }
+    },
+    "model": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "provider": { "type": "string" },
+        "effort": { "type": "string" }
+      }
+    },
+    "compile": {
+      "type": "object",
+      "properties": {
+        "steps": { "type": "integer" },
+        "model_calls": { "type": "integer" },
+        "seconds": { "type": "number" },
+        "cost_usd": { "type": "number" }
+      }
+    },
+    "replay": {
+      "type": "object",
+      "properties": {
+        "model_calls": { "type": "integer" },
+        "seconds": { "type": "number" }
+      }
+    },
+    "verify": {
+      "type": "object",
+      "properties": {
+        "evidence": { "type": "string" }
+      }
+    },
+    "redteam": {
+      "type": "object",
+      "properties": {
+        "passed": { "type": "integer" },
+        "total": { "type": "integer" }
+      }
+    },
+    "eval": {
+      "type": "object",
+      "properties": {
+        "success": { "type": "integer" },
+        "n": { "type": "integer" },
+        "tasks": { "type": "array", "items": { "type": "boolean" } }
+      }
+    },
+    "limits": { "type": "array", "items": { "type": "string" } },
+    "repo": { "type": "string" },
+    "install": { "type": "string" }
+  }
+}

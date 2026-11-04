@@ -1,0 +1,43 @@
+{
+  "version": "locked",
+  "voice": "af_sarah",
+  "speed": 1.0,
+  "lang": "en-us",
+  "scenes": [
+    {
+      "id": "intro",
+      "text": "Most teams run software that has no API. AnyBridge lets an AI assistant operate that software anyway, with evidence, approval, and replay.",
+      "maxDurationSeconds": 12
+    },
+    {
+      "id": "overview",
+      "text": "The model sees a numbered menu. It proposes a typed plan. A human approves out of band. The engine executes, verifies against the file system, and saves a hash-pinned workflow.",
+      "maxDurationSeconds": 18
+    },
+    {
+      "id": "demo-plan",
+      "text": "Here is fixture app A. The model inspects the page and returns a plan using only menu IDs. No selectors, no hard-coded URLs, and the model cannot approve its own plan.",
+      "maxDurationSeconds": 25
+    },
+    {
+      "id": "demo-approve",
+      "text": "In a separate terminal, a human runs anybridge approve, sees the plan hash, and types yes. The plan is single use and expires in ten minutes.",
+      "maxDurationSeconds": 20
+    },
+    {
+      "id": "demo-verify",
+      "text": "After execution, verification reads the data file, not the UI. The task passed because the JSON evidence says so. Then we save the workflow and replay it after a reset. Zero model calls.",
+      "maxDurationSeconds": 25
+    },
+    {
+      "id": "metrics",
+      "text": "Eight measured tasks passed plan, execute, verify, and replay. Compile took six seconds total. Replay took four. The engine blocked every covered attack.",
+      "maxDurationSeconds": 20
+    },
+    {
+      "id": "close",
+      "text": "Compile once, replay forever. AnyBridge is model-agnostic, MIT licensed, and ready for your own tools. Get it at the repository below.",
+      "maxDurationSeconds": 15
+    }
+  ]
+}

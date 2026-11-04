@@ -1,0 +1,44 @@
+[
+  {
+    "id": "intro",
+    "duration": 9.579,
+    "samples": 229888,
+    "sr": 24000
+  },
+  {
+    "id": "overview",
+    "duration": 11.307,
+    "samples": 271360,
+    "sr": 24000
+  },
+  {
+    "id": "demo-plan",
+    "duration": 11.477,
+    "samples": 275456,
+    "sr": 24000
+  },
+  {
+    "id": "demo-approve",
+    "duration": 8.683,
+    "samples": 208384,
+    "sr": 24000
+  },
+  {
+    "id": "demo-verify",
+    "duration": 12.544,
+    "samples": 301056,
+    "sr": 24000
+  },
+  {
+    "id": "metrics",
+    "duration": 9.856,
+    "samples": 236544,
+    "sr": 24000
+  },
+  {
+    "id": "close",
+    "duration": 9.344,
+    "samples": 224256,
+    "sr": 24000
+  }
+]
